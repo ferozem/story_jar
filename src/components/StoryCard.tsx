@@ -1,0 +1,57 @@
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Story } from '@/types/story';
+import { theme } from '@/constants/theme';
+
+interface Props {
+  story: Pick<Story, 'title' | 'coverArt' | 'readingTime'>;
+  onPress: () => void;
+}
+
+export function StoryCard({ story, onPress }: Props) {
+  return (
+    <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
+      <Image source={story.coverArt} style={styles.cover} resizeMode="cover" />
+      <View style={styles.info}>
+        <Text style={styles.title} numberOfLines={2}>{story.title}</Text>
+        <Text style={styles.readingTime}>{story.readingTime}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    flex: 1,
+    margin: theme.spacing.sm,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.radii.md,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  pressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.97 }],
+  },
+  cover: {
+    width: '100%',
+    height: 160,
+    backgroundColor: theme.colors.border,
+  },
+  info: {
+    padding: theme.spacing.sm,
+    gap: theme.spacing.xs,
+  },
+  title: {
+    fontSize: theme.fontSizes.body,
+    fontWeight: theme.fontWeights.bold,
+    color: theme.colors.text,
+  },
+  readingTime: {
+    fontSize: theme.fontSizes.caption,
+    color: theme.colors.textSecondary,
+  },
+});
