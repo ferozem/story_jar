@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "story_time_temp",
-    "slug": "story_time_temp",
+    "name": "story_time",
+    "slug": "story_time",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "storytimetemp",
+    "scheme": "storytime",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
@@ -34,7 +34,9 @@
             "imageWidth": 76
           }
         }
-      ]
+      ],
+      "expo-video",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

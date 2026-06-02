@@ -1,7 +1,8 @@
 export interface Page {
   text: string;
   illustration?: number;
-  audio?: number;
+  hasAudio: boolean;
+  audioSource?: number;
 }
 
 export interface Story {

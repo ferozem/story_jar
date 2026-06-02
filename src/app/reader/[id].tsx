@@ -1,46 +1,20 @@
-import { useEffect } from 'react';
-import { PanResponder, Pressable, SafeAreaView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { Pressable, SafeAreaView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { PageView } from '@/components/PageView';
-import { getStory } from '@/repository/story-repository';
+import { getStory } from '@/data/stories';
 import { theme } from '@/constants/theme';
-import { useRef, useState } from 'react';
+import { usePageNavigation } from '@/hooks/usePageNavigation';
+import { useNarration } from '@/hooks/useNarration';
 
 export default function ReaderScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [speechState, setSpeechState] = useState<'idle' | 'speaking' | 'paused'>('idle');
-  const swipeStartX = useRef(0);
 
   const story = getStory(id);
-  const totalPages = story?.pages.length ?? 0;
-  const isTitlePage = currentIndex === 0;
-  const canGoBack = currentIndex > 0;
-  const canGoNext = currentIndex < totalPages;
-  const progress = totalPages > 0 ? currentIndex / totalPages : 0;
-  const currentPage = !isTitlePage ? (story?.pages[currentIndex - 1] ?? null) : null;
 
-  const player = useAudioPlayer(null);
-  const status = useAudioPlayerStatus(player);
-
-  // Load correct audio and reset state on every page change
-  useEffect(() => {
-    player.pause();
-    setSpeechState('idle');
-    if (currentPage?.audio) {
-      player.replace(currentPage.audio);
-    }
-  }, [currentIndex]);
-
-  // Reset to idle when audio finishes naturally
-  useEffect(() => {
-    if (status.didJustFinish) {
-      setSpeechState('idle');
-    }
-  }, [status.didJustFinish]);
+  const nav = usePageNavigation(story!);
+  const narration = useNarration(nav.currentPage);
 
   if (!story) {
     return (
@@ -53,35 +27,6 @@ export default function ReaderScreen() {
     );
   }
 
-  function goNext() { if (canGoNext) setCurrentIndex((i) => i + 1); }
-  function goPrev() { if (canGoBack) setCurrentIndex((i) => i - 1); }
-
-  function toggleSpeech() {
-    if (!currentPage?.audio) return;
-    if (speechState === 'speaking') {
-      player.pause();
-      setSpeechState('paused');
-    } else if (speechState === 'paused') {
-      player.play();
-      setSpeechState('speaking');
-    } else {
-      player.play();
-      setSpeechState('speaking');
-    }
-  }
-
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => false,
-    onMoveShouldSetPanResponder: (_, gs) =>
-      Math.abs(gs.dx) > Math.abs(gs.dy) && Math.abs(gs.dx) > 12,
-    onPanResponderGrant: (e) => { swipeStartX.current = e.nativeEvent.pageX; },
-    onPanResponderRelease: (e) => {
-      const dx = e.nativeEvent.pageX - swipeStartX.current;
-      if (dx < -40) goNext();
-      else if (dx > 40) goPrev();
-    },
-  });
-
   return (
     <SafeAreaView style={styles.container}>
 
@@ -90,65 +35,67 @@ export default function ReaderScreen() {
         <Pressable onPress={() => router.push('/library')} hitSlop={12}>
           <Text style={styles.backButtonText}>← StoryJar</Text>
         </Pressable>
-        {!isTitlePage && (
+        {!nav.isTitlePage && (
           <Text style={styles.storyTitle} numberOfLines={1}>{story.title}</Text>
         )}
-        {!isTitlePage && (
-          <Text style={styles.pageCounter}>{currentIndex} / {totalPages}</Text>
+        {!nav.isTitlePage && (
+          <Text style={styles.pageCounter}>{nav.currentIndex} / {nav.totalPages}</Text>
         )}
-        {isTitlePage && <View style={styles.spacer} />}
+        {nav.isTitlePage && <View style={styles.spacer} />}
       </View>
 
       <View style={styles.rule} />
 
       {/* Page content */}
-      <View style={styles.pageArea} {...panResponder.panHandlers}>
-        {isTitlePage ? (
+      <View style={styles.pageArea} {...nav.panHandlers}>
+        {nav.isTitlePage ? (
           <View style={styles.titlePageContent}>
             <Text style={styles.titlePageText}>{story.title}</Text>
-            <Pressable style={styles.beginButton} onPress={goNext}>
+            <Pressable style={styles.beginButton} onPress={nav.goNext}>
               <Text style={styles.beginButtonText}>Begin reading ›</Text>
             </Pressable>
           </View>
         ) : (
-          <PageView key={currentIndex} page={story.pages[currentIndex - 1]} width={width} />
+          <PageView
+            key={nav.currentIndex}
+            page={story.pages[nav.currentIndex - 1]}
+            width={width}
+          />
         )}
       </View>
 
       {/* Compact footer */}
       <View style={styles.footer}>
         <Pressable
-          onPress={goPrev}
-          disabled={!canGoBack}
+          onPress={nav.goPrev}
+          disabled={!nav.canGoBack}
           hitSlop={12}
-          style={[styles.arrowBtn, !canGoBack && styles.arrowBtnDisabled]}
+          style={[styles.arrowBtn, !nav.canGoBack && styles.arrowBtnDisabled]}
         >
-          <Text style={[styles.arrowText, !canGoBack && styles.arrowTextDisabled]}>‹</Text>
+          <Text style={[styles.arrowText, !nav.canGoBack && styles.arrowTextDisabled]}>‹</Text>
         </Pressable>
 
-        {/* Progress bar */}
         <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+          <View style={[styles.progressFill, { width: `${nav.progress * 100}%` }]} />
         </View>
 
         <Pressable
-          onPress={goNext}
-          disabled={!canGoNext}
+          onPress={nav.goNext}
+          disabled={!nav.canGoNext}
           hitSlop={12}
-          style={[styles.arrowBtn, !canGoNext && styles.arrowBtnDisabled]}
+          style={[styles.arrowBtn, !nav.canGoNext && styles.arrowBtnDisabled]}
         >
-          <Text style={[styles.arrowText, !canGoNext && styles.arrowTextDisabled]}>›</Text>
+          <Text style={[styles.arrowText, !nav.canGoNext && styles.arrowTextDisabled]}>›</Text>
         </Pressable>
 
-        {/* Read-aloud button — shown only on content pages with audio */}
-        {!isTitlePage && currentPage?.audio && (
+        {!nav.isTitlePage && nav.currentPage?.hasAudio && (
           <Pressable
-            onPress={toggleSpeech}
+            onPress={narration.toggleSpeech}
             hitSlop={12}
-            style={[styles.arrowBtn, speechState !== 'idle' && styles.arrowBtnActive]}
+            style={[styles.arrowBtn, narration.speechState !== 'idle' && styles.arrowBtnActive]}
           >
-            <Text style={[styles.arrowText, speechState !== 'idle' && styles.arrowTextActive]}>
-              {speechState === 'speaking' ? '⏸' : speechState === 'paused' ? '▶' : '🔊'}
+            <Text style={[styles.arrowText, narration.speechState !== 'idle' && styles.arrowTextActive]}>
+              {narration.speechState === 'speaking' ? '⏸' : narration.speechState === 'paused' ? '▶' : '🔊'}
             </Text>
           </Pressable>
         )}
