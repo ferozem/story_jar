@@ -10,7 +10,10 @@ interface Props {
 export function StoryCard({ story, onPress }: Props) {
   return (
     <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
-      <Image source={story.coverArt} style={styles.cover} resizeMode="cover" />
+      {story.coverArt !== undefined
+        ? <Image source={story.coverArt} style={styles.cover} resizeMode="cover" />
+        : <View style={[styles.cover, styles.coverPlaceholder]} />
+      }
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={2}>{story.title}</Text>
         <Text style={styles.readingTime}>{story.readingTime}</Text>
@@ -40,6 +43,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 160,
     backgroundColor: theme.colors.border,
+  },
+  coverPlaceholder: {
+    backgroundColor: theme.colors.secondary,
   },
   info: {
     padding: theme.spacing.sm,

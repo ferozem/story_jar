@@ -108,4 +108,15 @@ describe('StoryCard', () => {
     render(<StoryCard story={mockStory} onPress={mockPress} />);
     expect(typeof mockPress).toBe('function');
   });
+
+  it('renders a placeholder when coverArt is undefined', () => {
+    const mockPress = jest.fn();
+    const { getByText } = render(
+      <StoryCard
+        story={{ title: 'No Cover Story', coverArt: undefined, readingTime: '3 min' }}
+        onPress={mockPress}
+      />
+    );
+    expect(getByText('No Cover Story')).toBeDefined();
+  });
 });
