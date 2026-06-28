@@ -3,6 +3,7 @@
  *
  * Usage:
  *   OPENAI_API_KEY=sk-... node scripts/generate-audio.mjs
+ *   OPENAI_API_KEY=sk-... node scripts/generate-audio.mjs --stories id1,id2,id3
  *
  * Output: assets/audio/[story-id]/page-[n].mp3
  * Skips files that already exist so it's safe to re-run.
@@ -23,7 +24,14 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const storyFiles = fs.readdirSync(STORIES_DIR).filter(f => f.endsWith('.json'));
+const storiesArg = process.argv.indexOf('--stories');
+const filter = storiesArg !== -1
+  ? new Set(process.argv[storiesArg + 1].split(',').map(s => s.trim()))
+  : null;
+
+const storyFiles = fs.readdirSync(STORIES_DIR)
+  .filter(f => f.endsWith('.json'))
+  .filter(f => filter === null || filter.has(f.replace('.json', '')));
 let generated = 0;
 let skipped = 0;
 let failed = 0;
