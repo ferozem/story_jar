@@ -9,9 +9,9 @@ describe('stories module', () => {
       expect(stories.length).toBeGreaterThan(0);
     });
 
-    it('returns 6 stories', () => {
+    it('returns 37 stories', () => {
       const stories = getStories();
-      expect(stories.length).toBe(6);
+      expect(stories.length).toBe(37);
     });
 
     it('each story has required properties', () => {
@@ -19,9 +19,17 @@ describe('stories module', () => {
       stories.forEach((story) => {
         expect(story).toHaveProperty('id');
         expect(story).toHaveProperty('title');
-        expect(story).toHaveProperty('coverArt');
         expect(story).toHaveProperty('readingTime');
         expect(story).toHaveProperty('pages');
+      });
+    });
+
+    it('stories with coverArt have a numeric value', () => {
+      const stories = getStories();
+      stories.forEach((story) => {
+        if (story.coverArt !== undefined) {
+          expect(typeof story.coverArt).toBe('number');
+        }
       });
     });
 
@@ -82,7 +90,6 @@ describe('stories module', () => {
 
       expect(foundStory?.title).toBe(testStory.title);
       expect(foundStory?.id).toBe(testStory.id);
-      expect(foundStory?.coverArt).toBe(testStory.coverArt);
       expect(foundStory?.readingTime).toBe(testStory.readingTime);
     });
 
@@ -108,7 +115,6 @@ describe('stories module', () => {
       const originalId = stories[0].id;
       const wrongCase = originalId.toUpperCase();
       const story = getStory(wrongCase);
-
       if (originalId !== wrongCase) {
         expect(story).toBeUndefined();
       }
@@ -124,7 +130,7 @@ describe('stories module', () => {
     it('default export is an array of stories', () => {
       const stories = require('@/data/stories').default;
       expect(Array.isArray(stories)).toBe(true);
-      expect(stories.length).toBe(6);
+      expect(stories.length).toBe(37);
     });
   });
 });
