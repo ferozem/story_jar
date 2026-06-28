@@ -25,8 +25,15 @@ if (!API_KEY) {
 }
 
 const storiesArg = process.argv.indexOf('--stories');
-const filter = storiesArg !== -1
-  ? new Set(process.argv[storiesArg + 1].split(',').map(s => s.trim()))
+const storiesVal  = storiesArg !== -1 ? process.argv[storiesArg + 1] : null;
+
+if (storiesArg !== -1 && !storiesVal) {
+  console.error('Error: --stories requires a comma-separated list of IDs.');
+  process.exit(1);
+}
+
+const filter = storiesVal
+  ? new Set(storiesVal.split(',').map(s => s.trim()).filter(Boolean))
   : null;
 
 const storyFiles = fs.readdirSync(STORIES_DIR)
