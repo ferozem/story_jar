@@ -24,11 +24,13 @@ describe('stories module', () => {
       });
     });
 
-    it('stories with coverArt have a numeric value', () => {
+    it('stories with coverArt have a valid asset reference', () => {
       const stories = getStories();
       stories.forEach((story) => {
         if (story.coverArt !== undefined) {
-          expect(typeof story.coverArt).toBe('number');
+          // Metro (production) returns a number; Jest returns a module object
+          expect(['number', 'object']).toContain(typeof story.coverArt);
+          expect(story.coverArt).not.toBeNull();
         }
       });
     });
