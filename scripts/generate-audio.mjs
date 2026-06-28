@@ -27,6 +27,11 @@ if (!API_KEY) {
 const storiesArg = process.argv.indexOf('--stories');
 const storiesVal = storiesArg !== -1 ? process.argv[storiesArg + 1] : null;
 
+if (storiesVal && storiesVal.startsWith('--')) {
+  console.error('Error: --stories requires a value, not another flag.');
+  process.exit(1);
+}
+
 if (storiesArg !== -1 && !storiesVal) {
   console.error('Error: --stories requires a comma-separated list of IDs.');
   process.exit(1);
@@ -44,6 +49,15 @@ if (filter !== null && filter.size === 0) {
 const storyFiles = fs.readdirSync(STORIES_DIR)
   .filter(f => f.endsWith('.json'))
   .filter(f => filter === null || filter.has(path.basename(f, '.json')));
+
+if (filter !== null) {
+  const matched = new Set(storyFiles.map(f => path.basename(f, '.json')));
+  for (const id of filter) {
+    if (!matched.has(id)) {
+      console.warn(`  warn  '${id}' not found in stories/ — check spelling`);
+    }
+  }
+}
 
 let generated = 0;
 let skipped = 0;
