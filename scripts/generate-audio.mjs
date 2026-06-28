@@ -25,7 +25,7 @@ if (!API_KEY) {
 }
 
 const storiesArg = process.argv.indexOf('--stories');
-const storiesVal  = storiesArg !== -1 ? process.argv[storiesArg + 1] : null;
+const storiesVal = storiesArg !== -1 ? process.argv[storiesArg + 1] : null;
 
 if (storiesArg !== -1 && !storiesVal) {
   console.error('Error: --stories requires a comma-separated list of IDs.');
@@ -36,9 +36,15 @@ const filter = storiesVal
   ? new Set(storiesVal.split(',').map(s => s.trim()).filter(Boolean))
   : null;
 
+if (filter !== null && filter.size === 0) {
+  console.error('Error: --stories produced an empty ID list after parsing.');
+  process.exit(1);
+}
+
 const storyFiles = fs.readdirSync(STORIES_DIR)
   .filter(f => f.endsWith('.json'))
-  .filter(f => filter === null || filter.has(f.replace('.json', '')));
+  .filter(f => filter === null || filter.has(path.basename(f, '.json')));
+
 let generated = 0;
 let skipped = 0;
 let failed = 0;
