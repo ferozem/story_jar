@@ -74,7 +74,7 @@ for (const id of storyIds) {
 }
 
 // ── 4. Generate audioAssets block ────────────────────────────────────────────
-let audioBlock = '\n\nexport const audioAssets: Record<string, number[]> = {\n';
+let audioBlock = '\nexport const audioAssets: Record<string, number[]> = {\n';
 for (const { id, mp3s } of entries) {
   audioBlock += `  '${id}': [\n`;
   for (const mp3 of mp3s) {
