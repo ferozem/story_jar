@@ -9,6 +9,7 @@ describe('asset-manifest', () => {
 
     it('has cover art for all 6 stories', () => {
       const keys = Object.keys(coverArt);
+      // Cover art is added separately from audio; stays at 6 until images are generated for new stories.
       expect(keys.length).toBe(6);
     });
 
