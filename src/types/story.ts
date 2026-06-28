@@ -8,7 +8,8 @@ export interface Page {
 export interface Story {
   id: string;
   title: string;
-  coverArt: number;
+  coverArt?: number;
   readingTime: string;
+  moral?: string;
   pages: Page[];
 }
