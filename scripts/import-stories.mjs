@@ -137,7 +137,15 @@ function main() {
   allRaw.push(...parseFormatB(contentB));
 
   // Deduplicate by id — first occurrence wins
-  const seen = new Set();
+  // Pre-seed with hardcoded existing IDs so markdown files can't shadow them
+  const seen = new Set([
+    'the-torn-map',
+    'the-locked-suggestion-box',
+    'the-forgotten-diary',
+    'the-broken-lantern',
+    'the-hilltop-trail',
+    'the-boy-near-the-gate',
+  ]);
   const unique = [];
   for (const story of allRaw) {
     const id = titleToId(story.title);
