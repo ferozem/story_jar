@@ -11,6 +11,7 @@ export const coverArt: Record<string, number> = {
   'the-hilltop-trail':          require('@/assets/stories/the-hilltop-trail/cover.png'),
   'the-boy-near-the-gate':      require('@/assets/stories/the-boy-near-the-gate/cover.png'),
 };
+
 export const audioAssets: Record<string, number[]> = {
   'the-boy-near-the-gate': [
     require('@/assets/audio/the-boy-near-the-gate/page-0.mp3'),

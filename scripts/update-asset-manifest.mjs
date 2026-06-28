@@ -21,12 +21,12 @@ const MANIFEST    = path.join(__dirname, '../src/data/asset-manifest.ts');
 
 // ── 1. Preserve the coverArt section ────────────────────────────────────────
 const current = fs.readFileSync(MANIFEST, 'utf8');
-const cutAt = current.indexOf('};');
+const cutAt = current.indexOf('\nexport const audioAssets');
 if (cutAt === -1) {
-  console.error('Error: could not find "};" in asset-manifest.ts — aborting.');
+  console.error('Error: could not find "export const audioAssets" in asset-manifest.ts — aborting.');
   process.exit(1);
 }
-const coverArtSection = current.slice(0, cutAt + 2); // includes '};'
+const coverArtSection = current.slice(0, cutAt); // everything before audioAssets
 
 // ── 2. Discover MP3 files ────────────────────────────────────────────────────
 if (!fs.existsSync(AUDIO_DIR)) {
@@ -56,7 +56,14 @@ for (const id of storyIds) {
     continue;
   }
 
-  const story = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+  let story;
+  try {
+    story = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+    if (!Array.isArray(story.pages)) throw new Error('missing pages array');
+  } catch (e) {
+    console.warn(`  warn  ${id}: could not read JSON (${e.message}) — skipping`);
+    continue;
+  }
   if (mp3s.length !== story.pages.length) {
     console.warn(`  warn  ${id}: ${mp3s.length} MP3s but ${story.pages.length} pages — skipping (re-run generate-audio to finish)`);
     continue;
@@ -67,11 +74,11 @@ for (const id of storyIds) {
 }
 
 // ── 4. Generate audioAssets block ────────────────────────────────────────────
-let audioBlock = '\nexport const audioAssets: Record<string, number[]> = {\n';
+let audioBlock = '\n\nexport const audioAssets: Record<string, number[]> = {\n';
 for (const { id, mp3s } of entries) {
   audioBlock += `  '${id}': [\n`;
   for (const mp3 of mp3s) {
-    const page = mp3.replace('.mp3', '');
+    const page = path.basename(mp3, '.mp3');
     audioBlock += `    require('@/assets/audio/${id}/${page}.mp3'),\n`;
   }
   audioBlock += `  ],\n`;
