@@ -3,6 +3,7 @@
  *
  * Usage:
  *   OPENAI_API_KEY=sk-... node scripts/generate-audio.mjs
+ *   OPENAI_API_KEY=sk-... node scripts/generate-audio.mjs --stories id1,id2,id3
  *
  * Output: assets/audio/[story-id]/page-[n].mp3
  * Skips files that already exist so it's safe to re-run.
@@ -23,7 +24,41 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const storyFiles = fs.readdirSync(STORIES_DIR).filter(f => f.endsWith('.json'));
+const storiesArg = process.argv.indexOf('--stories');
+const storiesVal = storiesArg !== -1 ? process.argv[storiesArg + 1] : null;
+
+if (storiesVal && storiesVal.startsWith('--')) {
+  console.error('Error: --stories requires a value, not another flag.');
+  process.exit(1);
+}
+
+if (storiesArg !== -1 && !storiesVal) {
+  console.error('Error: --stories requires a comma-separated list of IDs.');
+  process.exit(1);
+}
+
+const filter = storiesVal
+  ? new Set(storiesVal.split(',').map(s => s.trim()).filter(Boolean))
+  : null;
+
+if (filter !== null && filter.size === 0) {
+  console.error('Error: --stories produced an empty ID list after parsing.');
+  process.exit(1);
+}
+
+const storyFiles = fs.readdirSync(STORIES_DIR)
+  .filter(f => f.endsWith('.json'))
+  .filter(f => filter === null || filter.has(path.basename(f, '.json')));
+
+if (filter !== null) {
+  const matched = new Set(storyFiles.map(f => path.basename(f, '.json')));
+  for (const id of filter) {
+    if (!matched.has(id)) {
+      console.warn(`  warn  '${id}' not found in stories/ — check spelling`);
+    }
+  }
+}
+
 let generated = 0;
 let skipped = 0;
 let failed = 0;
