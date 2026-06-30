@@ -146,6 +146,57 @@ describe('useNarration', () => {
     expect(result.current.speechState).toBe('speaking');
   });
 
+  it('auto-starts playing on initial page when isAutoPlaying is true', () => {
+    const onFinished = jest.fn();
+    const { result } = renderHook(() => useNarration(mockPage, true, onFinished));
+    expect(result.current.speechState).toBe('speaking');
+  });
+
+  it('auto-starts playing on the new page when isAutoPlaying is true and page changes', () => {
+    const page1: Page = { text: 'Page 1', hasAudio: true, audioSource: 1 };
+    const page2: Page = { text: 'Page 2', hasAudio: true, audioSource: 2 };
+    const onFinished = jest.fn();
+
+    const { result, rerender } = renderHook(
+      ({ page }: { page: Page }) => useNarration(page, true, onFinished),
+      { initialProps: { page: page1 } }
+    );
+
+    expect(result.current.speechState).toBe('speaking');
+
+    act(() => {
+      rerender({ page: page2 });
+    });
+
+    expect(result.current.speechState).toBe('speaking');
+  });
+
+  it('calls onFinished when audio ends naturally while isAutoPlaying is true', () => {
+    const { useAudioPlayerStatus } = require('expo-audio');
+    const onFinished = jest.fn();
+    useAudioPlayerStatus.mockReturnValue({ didJustFinish: false });
+
+    const { rerender } = renderHook(() => useNarration(mockPage, true, onFinished));
+
+    useAudioPlayerStatus.mockReturnValue({ didJustFinish: true });
+    act(() => { rerender(); });
+
+    expect(onFinished).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not call onFinished when audio ends and isAutoPlaying is false', () => {
+    const { useAudioPlayerStatus } = require('expo-audio');
+    const onFinished = jest.fn();
+    useAudioPlayerStatus.mockReturnValue({ didJustFinish: false });
+
+    const { rerender } = renderHook(() => useNarration(mockPage, false, onFinished));
+
+    useAudioPlayerStatus.mockReturnValue({ didJustFinish: true });
+    act(() => { rerender(); });
+
+    expect(onFinished).not.toHaveBeenCalled();
+  });
+
   it('type SpeechState includes valid states', () => {
     const { result } = renderHook(() => useNarration(mockPage));
     const validStates = ['idle', 'speaking', 'paused'];

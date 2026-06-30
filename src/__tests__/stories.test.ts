@@ -9,9 +9,9 @@ describe('stories module', () => {
       expect(stories.length).toBeGreaterThan(0);
     });
 
-    it('returns 37 stories', () => {
+    it('returns 61 stories', () => {
       const stories = getStories();
-      expect(stories.length).toBe(37);
+      expect(stories.length).toBe(61);
     });
 
     it('each story has required properties', () => {
@@ -132,7 +132,7 @@ describe('stories module', () => {
     it('default export is an array of stories', () => {
       const stories = require('@/data/stories').default;
       expect(Array.isArray(stories)).toBe(true);
-      expect(stories.length).toBe(37);
+      expect(stories.length).toBe(61);
     });
   });
 });
