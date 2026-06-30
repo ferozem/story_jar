@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, act } from '@testing-library/react-native';
 import ReaderScreen from '@/app/reader/[id]';
 
 const mockPush = jest.fn();
@@ -146,6 +146,27 @@ describe('ReaderScreen', () => {
       fireEvent.press(getByText('🔊'));
       fireEvent.press(getByText('⏸'));
       expect(getByText('▶')).toBeDefined();
+    });
+
+    it('auto-advances to the next page when audio finishes while auto-playing', () => {
+      const { useAudioPlayerStatus } = require('expo-audio');
+      useAudioPlayerStatus.mockReturnValue({ didJustFinish: false });
+
+      const { getByText, rerender: rerenderComponent } = render(<ReaderScreen />);
+
+      fireEvent.press(getByText('Begin reading ›'));
+      expect(getByText('1 / 2')).toBeDefined();
+
+      fireEvent.press(getByText('🔊'));
+      expect(getByText('⏸')).toBeDefined();
+
+      useAudioPlayerStatus.mockReturnValue({ didJustFinish: true });
+      act(() => {
+        rerenderComponent(<ReaderScreen />);
+      });
+
+      expect(getByText('Page two content here.')).toBeDefined();
+      expect(getByText('2 / 2')).toBeDefined();
     });
 
     it('back button navigates to library during reading', () => {

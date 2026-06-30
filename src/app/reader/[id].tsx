@@ -1,5 +1,6 @@
 import { Pressable, SafeAreaView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
 import { PageView } from '@/components/PageView';
 import { getStory } from '@/data/stories';
 import { theme } from '@/constants/theme';
@@ -12,9 +13,25 @@ export default function ReaderScreen() {
   const { width } = useWindowDimensions();
 
   const story = getStory(id);
-
   const nav = usePageNavigation(story!);
-  const narration = useNarration(nav.currentPage);
+
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+
+  function handleNarrationFinished() {
+    if (nav.canGoNext) {
+      nav.goNext();
+    } else {
+      setIsAutoPlaying(false);
+    }
+  }
+
+  const narration = useNarration(nav.currentPage, isAutoPlaying, handleNarrationFinished);
+
+  function handleVoiceButton() {
+    const willPlay = narration.speechState !== 'speaking';
+    setIsAutoPlaying(willPlay);
+    narration.toggleSpeech();
+  }
 
   if (!story) {
     return (
@@ -90,7 +107,7 @@ export default function ReaderScreen() {
 
         {!nav.isTitlePage && nav.currentPage?.hasAudio && (
           <Pressable
-            onPress={narration.toggleSpeech}
+            onPress={handleVoiceButton}
             hitSlop={12}
             style={[styles.arrowBtn, narration.speechState !== 'idle' && styles.arrowBtnActive]}
           >
