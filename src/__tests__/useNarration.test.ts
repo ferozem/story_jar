@@ -146,6 +146,31 @@ describe('useNarration', () => {
     expect(result.current.speechState).toBe('speaking');
   });
 
+  it('auto-starts playing on initial page when isAutoPlaying is true', () => {
+    const onFinished = jest.fn();
+    const { result } = renderHook(() => useNarration(mockPage, true, onFinished));
+    expect(result.current.speechState).toBe('speaking');
+  });
+
+  it('auto-starts playing on the new page when isAutoPlaying is true and page changes', () => {
+    const page1: Page = { text: 'Page 1', hasAudio: true, audioSource: 1 };
+    const page2: Page = { text: 'Page 2', hasAudio: true, audioSource: 2 };
+    const onFinished = jest.fn();
+
+    const { result, rerender } = renderHook(
+      ({ page }: { page: Page }) => useNarration(page, true, onFinished),
+      { initialProps: { page: page1 } }
+    );
+
+    expect(result.current.speechState).toBe('speaking');
+
+    act(() => {
+      rerender({ page: page2 });
+    });
+
+    expect(result.current.speechState).toBe('speaking');
+  });
+
   it('type SpeechState includes valid states', () => {
     const { result } = renderHook(() => useNarration(mockPage));
     const validStates = ['idle', 'speaking', 'paused'];
