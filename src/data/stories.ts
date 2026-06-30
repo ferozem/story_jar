@@ -38,6 +38,30 @@ import theBorrowedCompass from './stories/the-borrowed-compass.json';
 import theBlueWaterBottle from './stories/the-blue-water-bottle.json';
 import thePromiseAtTheGate from './stories/the-promise-at-the-gate.json';
 import theCrookedBadge from './stories/the-crooked-badge.json';
+import theBirthdayPencil from './stories/the-birthday-pencil.json';
+import theBlueChalk from './stories/the-blue-chalk.json';
+import theBrokenCrayon from './stories/the-broken-crayon.json';
+import theChalkLine from './stories/the-chalk-line.json';
+import theCupOfWater from './stories/the-cup-of-water.json';
+import theEmptyChair from './stories/the-empty-chair.json';
+import theHalfBuiltKite from './stories/the-half-built-kite.json';
+import theLastBell from './stories/the-last-bell.json';
+import theLastPage from './stories/the-last-page.json';
+import theLastSeat from './stories/the-last-seat.json';
+import theLateHomework from './stories/the-late-homework.json';
+import theLostRibbon from './stories/the-lost-ribbon.json';
+import theNewShoes from './stories/the-new-shoes.json';
+import thePaperBoatRace from './stories/the-paper-boat-race.json';
+import thePaperCrown from './stories/the-paper-crown.json';
+import theQuietDrummer from './stories/the-quiet-drummer.json';
+import theSmallBlueUmbrella from './stories/the-small-blue-umbrella.json';
+import theSmallestLantern from './stories/the-smallest-lantern.json';
+import theSmallestSeed from './stories/the-smallest-seed.json';
+import theTornPage from './stories/the-torn-page.json';
+import theTwoLunches from './stories/the-two-lunches.json';
+import theWindowPlant from './stories/the-window-plant.json';
+import theWindowSeat from './stories/the-window-seat.json';
+import theWrongSong from './stories/the-wrong-song.json';
 
 const stories: Story[] = [
   assembleStory(tornMap),
@@ -77,6 +101,30 @@ const stories: Story[] = [
   assembleStory(theBlueWaterBottle),
   assembleStory(thePromiseAtTheGate),
   assembleStory(theCrookedBadge),
+  assembleStory(theBirthdayPencil),
+  assembleStory(theBlueChalk),
+  assembleStory(theBrokenCrayon),
+  assembleStory(theChalkLine),
+  assembleStory(theCupOfWater),
+  assembleStory(theEmptyChair),
+  assembleStory(theHalfBuiltKite),
+  assembleStory(theLastBell),
+  assembleStory(theLastPage),
+  assembleStory(theLastSeat),
+  assembleStory(theLateHomework),
+  assembleStory(theLostRibbon),
+  assembleStory(theNewShoes),
+  assembleStory(thePaperBoatRace),
+  assembleStory(thePaperCrown),
+  assembleStory(theQuietDrummer),
+  assembleStory(theSmallBlueUmbrella),
+  assembleStory(theSmallestLantern),
+  assembleStory(theSmallestSeed),
+  assembleStory(theTornPage),
+  assembleStory(theTwoLunches),
+  assembleStory(theWindowPlant),
+  assembleStory(theWindowSeat),
+  assembleStory(theWrongSong),
 ];
 
 export function getStories(): Story[] {

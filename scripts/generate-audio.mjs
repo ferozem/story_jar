@@ -4,6 +4,10 @@
  * Usage:
  *   OPENAI_API_KEY=sk-... node scripts/generate-audio.mjs
  *   OPENAI_API_KEY=sk-... node scripts/generate-audio.mjs --stories id1,id2,id3
+ *   OPENAI_API_KEY=sk-... node scripts/generate-audio.mjs --voices nova,alloy,shimmer
+ *
+ * --voices cycles through the given voices per story (all pages of a story use the same voice).
+ * Defaults to shimmer for all stories when omitted.
  *
  * Output: assets/audio/[story-id]/page-[n].mp3
  * Skips files that already exist so it's safe to re-run.
@@ -59,14 +63,33 @@ if (filter !== null) {
   }
 }
 
+const voicesArg = process.argv.indexOf('--voices');
+const voicesVal = voicesArg !== -1 ? process.argv[voicesArg + 1] : null;
+
+if (voicesVal && voicesVal.startsWith('--')) {
+  console.error('Error: --voices requires a value, not another flag.');
+  process.exit(1);
+}
+
+const voices = voicesVal
+  ? voicesVal.split(',').map(s => s.trim()).filter(Boolean)
+  : ['shimmer'];
+
+if (voices.length === 0) {
+  console.error('Error: --voices produced an empty voice list after parsing.');
+  process.exit(1);
+}
+
 let generated = 0;
 let skipped = 0;
 let failed = 0;
 
-for (const file of storyFiles) {
+for (let storyIndex = 0; storyIndex < storyFiles.length; storyIndex++) {
+  const file = storyFiles[storyIndex];
   const story = JSON.parse(fs.readFileSync(path.join(STORIES_DIR, file), 'utf8'));
   const outDir = path.join(AUDIO_DIR, story.id);
   fs.mkdirSync(outDir, { recursive: true });
+  const voice = voices[storyIndex % voices.length];
 
   for (let i = 0; i < story.pages.length; i++) {
     const outPath = path.join(outDir, `page-${i}.mp3`);
@@ -78,7 +101,7 @@ for (const file of storyFiles) {
     }
 
     const text = story.pages[i].text;
-    process.stdout.write(`  gen   ${story.id}/page-${i}.mp3 ... `);
+    process.stdout.write(`  gen   ${story.id}/page-${i}.mp3 [${voice}] ... `);
 
     try {
       const res = await fetch('https://api.openai.com/v1/audio/speech', {
@@ -89,7 +112,7 @@ for (const file of storyFiles) {
         },
         body: JSON.stringify({
           model: 'tts-1-hd',
-          voice: 'shimmer',
+          voice,
           input: text,
           response_format: 'mp3',
         }),
