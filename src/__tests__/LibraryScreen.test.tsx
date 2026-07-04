@@ -10,25 +10,14 @@ jest.mock('expo-router', () => ({
 
 jest.mock('@/data/stories', () => ({
   getStories: () => [
-    {
-      id: 'the-magic-forest',
-      title: 'The Magic Forest',
-      coverArt: 1,
-      readingTime: '3 min',
-      pages: [],
-    },
-    {
-      id: 'the-lost-key',
-      title: 'The Lost Key',
-      coverArt: 2,
-      readingTime: '5 min',
-      pages: [],
-    },
+    { id: 'c1', title: 'Brave One', readingTime: '3 min', category: 'Courage', pages: [] },
+    { id: 'c2', title: 'Brave Two', readingTime: '3 min', category: 'Courage', pages: [] },
+    { id: 'h1', title: 'Honest One', readingTime: '5 min', category: 'Honesty & Trust', pages: [] },
   ],
   getStory: jest.fn(),
 }));
 
-describe('LibraryScreen', () => {
+describe('LibraryScreen (shelf grid)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -42,31 +31,43 @@ describe('LibraryScreen', () => {
     expect(getByText('StoryJar')).toBeDefined();
   });
 
-  it('renders a story card for each story', () => {
+  it('renders a jar for each represented category', () => {
     const { getByText } = render(<LibraryScreen />);
-    expect(getByText('The Magic Forest')).toBeDefined();
-    expect(getByText('The Lost Key')).toBeDefined();
+    expect(getByText('Courage')).toBeDefined();
+    expect(getByText('Honesty & Trust')).toBeDefined();
   });
 
-  it('renders reading times for each story', () => {
+  it('shows the story count on each jar', () => {
     const { getByText } = render(<LibraryScreen />);
-    expect(getByText('3 min')).toBeDefined();
-    expect(getByText('5 min')).toBeDefined();
+    expect(getByText('2 stories')).toBeDefined(); // Courage
+    expect(getByText('1 stories')).toBeDefined(); // Honesty & Trust
   });
 
-  it('navigates to the correct reader route when a story card is pressed', () => {
-    const { getByText } = render(<LibraryScreen />);
-    fireEvent.press(getByText('The Magic Forest'));
-    expect(mockPush).toHaveBeenCalledWith('/reader/the-magic-forest');
+  it('does not render categories that have no stories', () => {
+    const { queryByText } = render(<LibraryScreen />);
+    expect(queryByText('Patience')).toBeNull();
+    expect(queryByText('Forgiveness')).toBeNull();
   });
 
-  it('navigates to the second story when that card is pressed', () => {
+  it('navigates to the category route when a jar is pressed', () => {
     const { getByText } = render(<LibraryScreen />);
-    fireEvent.press(getByText('The Lost Key'));
-    expect(mockPush).toHaveBeenCalledWith('/reader/the-lost-key');
+    fireEvent.press(getByText('Courage'));
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/category/[category]',
+      params: { category: 'Courage' },
+    });
   });
 
-  it('does not navigate before any card is pressed', () => {
+  it('passes the full category name (incl. spaces and symbols) as a param', () => {
+    const { getByText } = render(<LibraryScreen />);
+    fireEvent.press(getByText('Honesty & Trust'));
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/category/[category]',
+      params: { category: 'Honesty & Trust' },
+    });
+  });
+
+  it('does not navigate before any jar is pressed', () => {
     render(<LibraryScreen />);
     expect(mockPush).not.toHaveBeenCalled();
   });

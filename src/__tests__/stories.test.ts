@@ -1,5 +1,5 @@
 import { getStories, getStory } from '@/data/stories';
-import { Story } from '@/types/story';
+import { Story, STORY_CATEGORIES } from '@/types/story';
 
 describe('stories module', () => {
   describe('getStories', () => {
@@ -32,6 +32,13 @@ describe('stories module', () => {
           expect(['number', 'object']).toContain(typeof story.coverArt);
           expect(story.coverArt).not.toBeNull();
         }
+      });
+    });
+
+    it('each story has a category from the fixed taxonomy', () => {
+      const stories = getStories();
+      stories.forEach((story) => {
+        expect(STORY_CATEGORIES).toContain(story.category);
       });
     });
 

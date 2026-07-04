@@ -1,8 +1,8 @@
-import { Story, Page } from '@/types/story';
+import { Story, StoryCategory, Page } from '@/types/story';
 import { coverArt, audioAssets } from './asset-manifest';
 
 type RawPage = { text: string };
-type RawStory = { id: string; title: string; readingTime: string; moral?: string; pages: RawPage[] };
+type RawStory = { id: string; title: string; readingTime: string; category: string; moral?: string; pages: RawPage[] };
 
 export function assembleStory(raw: RawStory): Story {
   const audio = audioAssets[raw.id] ?? [];
@@ -24,6 +24,7 @@ export function assembleStory(raw: RawStory): Story {
     id: raw.id,
     title: raw.title,
     readingTime: raw.readingTime,
+    category: raw.category as StoryCategory,
     coverArt: coverArt[raw.id],
     moral: raw.moral,
     pages,

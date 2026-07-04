@@ -7,6 +7,7 @@ const mockStory: Story = {
   title: 'Test Story',
   coverArt: 1,
   readingTime: '2 min',
+  category: 'Courage',
   pages: [
     { text: 'Page 1', hasAudio: false },
     { text: 'Page 2', hasAudio: false },
