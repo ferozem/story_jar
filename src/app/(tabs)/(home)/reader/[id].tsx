@@ -18,7 +18,7 @@ export default function ReaderScreen() {
   const story = getStory(id);
   const hasLesson = !!story?.moral;
   const startIndex = page ? Number(page) : 0;
-  const nav = usePageNavigation(story!, { initialIndex: startIndex, hasLesson });
+  const nav = usePageNavigation(story ?? null, { initialIndex: startIndex, hasLesson });
 
   const favorites = useFavorites();
   const { setLast, clear } = useContinue();

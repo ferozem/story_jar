@@ -28,6 +28,13 @@ describe('usePageNavigation', () => {
     expect(result.current.totalPages).toBe(3);
   });
 
+  it('tolerates a null story without throwing (reader not-found path)', () => {
+    const { result } = renderHook(() => usePageNavigation(null));
+    expect(result.current.totalPages).toBe(0);
+    expect(result.current.currentPage).toBeNull();
+    expect(result.current.canGoNext).toBe(false);
+  });
+
   it('navigates forward with goNext', () => {
     const { result } = renderHook(() => usePageNavigation(mockStory));
     act(() => {

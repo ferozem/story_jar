@@ -5,9 +5,11 @@ import { theme } from '@/constants/theme';
 interface Props {
   story: Story;
   onPress: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
-export function StoryOfTheDayCard({ story, onPress }: Props) {
+export function StoryOfTheDayCard({ story, onPress, isFavorite, onToggleFavorite }: Props) {
   return (
     <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
       {story.coverArt !== undefined && (
@@ -19,6 +21,11 @@ export function StoryOfTheDayCard({ story, onPress }: Props) {
         <Text style={styles.meta}>{story.category} · {story.readingTime}</Text>
       </View>
       <Text style={styles.play}>▶</Text>
+      {onToggleFavorite && (
+        <Pressable style={styles.heart} onPress={onToggleFavorite} hitSlop={10}>
+          <Text style={styles.heartText}>{isFavorite ? '♥' : '♡'}</Text>
+        </Pressable>
+      )}
     </Pressable>
   );
 }
@@ -39,4 +46,9 @@ const styles = StyleSheet.create({
   title: { fontSize: theme.fontSizes.body, fontWeight: theme.fontWeights.bold, color: theme.colors.text, marginTop: 2 },
   meta: { fontSize: theme.fontSizes.caption, color: theme.colors.textSecondary, marginTop: 2 },
   play: { fontSize: 18, color: theme.colors.primary, paddingHorizontal: theme.spacing.xs },
+  heart: {
+    position: 'absolute', top: 6, right: 8,
+    width: 26, height: 26, alignItems: 'center', justifyContent: 'center',
+  },
+  heartText: { fontSize: 16, color: theme.colors.primary },
 });

@@ -20,7 +20,7 @@ import { getStoryOfTheDay } from '@/data/story-of-the-day';
 import { StoryCategory, STORY_CATEGORIES } from '@/types/story';
 import { CATEGORY_CARD_THEMES, CATEGORY_COLORS, tintOnCream } from '@/constants/categories';
 import { theme } from '@/constants/theme';
-import { useContinue } from '@/state/AppData';
+import { useContinue, useFavorites } from '@/state/AppData';
 
 type Shelf = { category: StoryCategory; count: number };
 
@@ -80,6 +80,7 @@ export default function LibraryScreen() {
   const [heroHeight, setHeroHeight] = useState(190);
   const today = getStoryOfTheDay(new Date());
   const { last } = useContinue();
+  const favorites = useFavorites();
   const continueStory = last ? getStory(last.storyId) : undefined;
 
   function renderItem({ item }: { item: Shelf }) {
@@ -136,7 +137,12 @@ export default function LibraryScreen() {
               />
             )}
             {today && (
-              <StoryOfTheDayCard story={today} onPress={() => router.push(`/reader/${today.id}`)} />
+              <StoryOfTheDayCard
+                story={today}
+                onPress={() => router.push(`/reader/${today.id}`)}
+                isFavorite={favorites.isFavorite(today.id)}
+                onToggleFavorite={() => favorites.toggle(today.id)}
+              />
             )}
           </View>
         }

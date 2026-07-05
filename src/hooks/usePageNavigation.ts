@@ -21,12 +21,14 @@ interface Options {
   hasLesson?: boolean;
 }
 
-export function usePageNavigation(story: Story, options: Options = {}): PageNavigation {
+export function usePageNavigation(story: Story | null, options: Options = {}): PageNavigation {
   const { initialIndex = 0, hasLesson = false } = options;
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const swipeStartX = useRef(0);
 
-  const totalPages = story.pages.length;
+  // Tolerate a null story: the reader calls this hook before its `if (!story)`
+  // guard (hooks can't run conditionally), so this must not dereference story.
+  const totalPages = story?.pages.length ?? 0;
   // Content pages are 1..totalPages. When hasLesson, one extra step (totalPages + 1) is the lesson.
   const maxIndex = hasLesson ? totalPages + 1 : totalPages;
   const isTitlePage = currentIndex === 0;
@@ -34,7 +36,7 @@ export function usePageNavigation(story: Story, options: Options = {}): PageNavi
   const canGoBack = currentIndex > 0;
   const canGoNext = currentIndex < maxIndex;
   const progress = totalPages > 0 ? Math.min(currentIndex, totalPages) / totalPages : 0;
-  const currentPage = !isTitlePage && !isLessonPage ? (story.pages[currentIndex - 1] ?? null) : null;
+  const currentPage = story && !isTitlePage && !isLessonPage ? (story.pages[currentIndex - 1] ?? null) : null;
 
   function goNext() { if (canGoNext) setCurrentIndex((i) => i + 1); }
   function goPrev() { if (canGoBack) setCurrentIndex((i) => i - 1); }
