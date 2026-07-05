@@ -1,4 +1,5 @@
 import { StoryCategory } from '@/types/story';
+import type { CardThemeArtKey } from '@/data/decorative-art';
 
 /**
  * Per-virtue brand color. Hues are pulled toward the warm app palette
@@ -15,6 +16,18 @@ export const CATEGORY_COLORS: Record<StoryCategory, string> = {
   'Courage': '#e09a2a',
   'Fairness': '#6e7cc4',
   'Gratitude & Contentment': '#d9a62e',
+};
+
+export const CATEGORY_CARD_THEMES: Record<StoryCategory, CardThemeArtKey> = {
+  'Honesty & Trust': 'peach',
+  'Humility & Service': 'mint',
+  'Kindness & Compassion': 'gold',
+  'Sharing & Generosity': 'peach',
+  'Forgiveness': 'mint',
+  'Patience': 'lavender',
+  'Courage': 'gold',
+  'Fairness': 'lavender',
+  'Gratitude & Contentment': 'gold',
 };
 
 /** Mix a hex color onto the app's cream ground (#FFF8F0) so tints blend with the app. */

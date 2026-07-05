@@ -1,6 +1,7 @@
-import { Pressable, SafeAreaView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { PageView } from '@/components/PageView';
 import { getStory } from '@/data/stories';
 import { theme } from '@/constants/theme';
@@ -26,6 +27,18 @@ export default function ReaderScreen() {
   }
 
   const narration = useNarration(nav.currentPage, isAutoPlaying, handleNarrationFinished);
+
+  // Stop narration whenever the reader loses focus (back, or a new screen pushed
+  // on top). Without this the audio keeps playing — and stacks — after leaving.
+  const stopNarration = narration.stop;
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setIsAutoPlaying(false);
+        stopNarration();
+      };
+    }, [stopNarration])
+  );
 
   function handleVoiceButton() {
     const willPlay = narration.speechState !== 'speaking';

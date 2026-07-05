@@ -7,6 +7,7 @@ const mockPush = jest.fn();
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
   useLocalSearchParams: () => ({ id: 'nonexistent-id' }),
+  useFocusEffect: jest.fn(),
 }));
 
 jest.mock('@/data/stories', () => ({
@@ -34,6 +35,7 @@ jest.mock('@/hooks/useNarration', () => ({
   useNarration: jest.fn(() => ({
     speechState: 'idle',
     toggleSpeech: jest.fn(),
+    stop: jest.fn(),
   })),
 }));
 

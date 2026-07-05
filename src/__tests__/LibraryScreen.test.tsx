@@ -8,6 +8,10 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
+jest.mock('react-native-safe-area-context', () => ({
+  useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+}));
+
 jest.mock('@/data/stories', () => ({
   getStories: () => [
     { id: 'c1', title: 'Brave One', readingTime: '3 min', category: 'Courage', pages: [] },

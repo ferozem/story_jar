@@ -3,10 +3,15 @@ import { render, fireEvent, act } from '@testing-library/react-native';
 import ReaderScreen from '@/app/reader/[id]';
 
 const mockPush = jest.fn();
+// Captures the focus-effect cleanup so tests can simulate the screen blurring.
+let mockFocusCleanup: (() => void) | undefined;
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: mockPush }),
   useLocalSearchParams: () => ({ id: 'test-story' }),
+  useFocusEffect: (cb: () => undefined | (() => void)) => {
+    mockFocusCleanup = cb() ?? undefined;
+  },
 }));
 
 jest.mock('@/data/stories', () => {
@@ -174,6 +179,20 @@ describe('ReaderScreen', () => {
       fireEvent.press(getByText('Begin reading ›'));
       fireEvent.press(getByText('← StoryJar'));
       expect(mockPush).toHaveBeenCalledWith('/library');
+    });
+
+    it('stops narration when the screen loses focus', () => {
+      const { getByText, queryByText } = render(<ReaderScreen />);
+      fireEvent.press(getByText('Begin reading ›'));
+      fireEvent.press(getByText('🔊'));
+      expect(getByText('⏸')).toBeDefined(); // playing
+
+      act(() => {
+        mockFocusCleanup?.(); // simulate navigating away (blur)
+      });
+
+      expect(getByText('🔊')).toBeDefined(); // back to idle
+      expect(queryByText('⏸')).toBeNull();
     });
   });
 });

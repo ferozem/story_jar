@@ -1,13 +1,12 @@
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { StoryCard } from '@/components/StoryCard';
-import { CategoryIcon } from '@/components/CategoryIcon';
 import { getStories } from '@/data/stories';
+import { categoryHeroArt } from '@/data/decorative-art';
 import { Story, StoryCategory, STORY_CATEGORIES } from '@/types/story';
-import { CATEGORY_COLORS, tintOnCream } from '@/constants/categories';
 import { theme } from '@/constants/theme';
 
 function resolveCategory(raw?: string): StoryCategory | undefined {
@@ -22,6 +21,7 @@ export default function CategoryScreen() {
   const { category: rawParam } = useLocalSearchParams<{ category: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
 
   const category = resolveCategory(rawParam);
   const stories = category ? getStories().filter((s) => s.category === category) : [];
@@ -38,24 +38,18 @@ export default function CategoryScreen() {
     );
   }
 
-  const color = CATEGORY_COLORS[category];
+  const heroArt = categoryHeroArt[category];
+
+  // ~30% of the screen, with sensible floor/ceiling across device sizes.
+  const heroHeight = Math.min(360, Math.max(240, Math.round(height * 0.3)));
 
   const hero = (
-    <View style={[styles.hero, { paddingTop: insets.top + 20 }]}>
+    <View style={[styles.hero, { minHeight: heroHeight, paddingTop: insets.top + 24 }]}>
+      <Image source={heroArt} style={StyleSheet.absoluteFill} resizeMode="cover" />
       <LinearGradient
-        colors={[tintOnCream(color, 68), color]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0.4, y: 1 }}
+        colors={['rgba(30,20,12,0.04)', 'rgba(40,25,10,0.42)']}
         style={StyleSheet.absoluteFill}
       />
-      <LinearGradient
-        colors={['transparent', 'rgba(40,25,10,0.34)']}
-        style={StyleSheet.absoluteFill}
-      />
-
-      <View style={styles.watermark} pointerEvents="none">
-        <CategoryIcon category={category} color="#ffffff" size={150} />
-      </View>
 
       <Pressable
         style={[styles.back, { top: insets.top + 8 }]}
@@ -104,20 +98,12 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   hero: {
-    minHeight: 210,
-    paddingHorizontal: 22,
-    paddingBottom: 22,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    paddingHorizontal: 24,
+    paddingBottom: 26,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
     overflow: 'hidden',
     justifyContent: 'flex-end',
-  },
-  watermark: {
-    position: 'absolute',
-    top: 24,
-    right: -10,
-    opacity: 0.26,
-    transform: [{ rotate: '-8deg' }],
   },
   back: {
     position: 'absolute',
@@ -133,28 +119,28 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
   },
   kick: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: theme.fontWeights.bold,
-    color: 'rgba(255,255,255,0.9)',
-    letterSpacing: 2,
+    color: 'rgba(255,255,255,0.92)',
+    letterSpacing: 2.4,
     textTransform: 'uppercase',
   },
   heroTitle: {
-    fontSize: 30,
+    fontSize: 34,
     fontWeight: theme.fontWeights.bold,
     color: '#ffffff',
-    marginTop: 6,
-    marginBottom: 12,
+    marginTop: 8,
+    marginBottom: 14,
   },
   countPill: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255,255,255,0.24)',
+    backgroundColor: 'rgba(255,255,255,0.26)',
     borderRadius: 999,
-    paddingVertical: 5,
-    paddingHorizontal: 13,
+    paddingVertical: 6,
+    paddingHorizontal: 15,
   },
   countPillText: {
-    fontSize: 13,
+    fontSize: 13.5,
     fontWeight: theme.fontWeights.bold,
     color: '#ffffff',
   },
@@ -179,3 +165,4 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeights.bold,
   },
 });
+

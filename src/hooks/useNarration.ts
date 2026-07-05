@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { Page } from '@/types/story';
 
@@ -7,6 +7,19 @@ export type SpeechState = 'idle' | 'speaking' | 'paused';
 export interface Narration {
   speechState: SpeechState;
   toggleSpeech: () => void;
+  stop: () => void;
+}
+
+// expo-audio releases the native player when the component unmounts. A
+// focus-effect cleanup (stop) or a late status update can call into it a tick
+// later, throwing "Cannot use shared object that was already released". These
+// calls are fire-and-forget, so swallow that unmount race rather than crash.
+function safe(op: () => void) {
+  try {
+    op();
+  } catch {
+    // player already released — nothing to do
+  }
 }
 
 export function useNarration(
@@ -26,14 +39,20 @@ export function useNarration(
   const onFinishedRef = useRef(onFinished);
   onFinishedRef.current = onFinished;
 
+  // Keep a stable ref to the player so stop() can have a stable identity
+  // (it's used as a focus-effect cleanup that must not change every render).
+  const playerRef = useRef(player);
+  playerRef.current = player;
+
   // Load audio on page change; auto-start if in continuous-play mode
   useEffect(() => {
-    player.pause();
+    safe(() => player.pause());
     setSpeechState('idle');
-    if (currentPage?.audioSource) {
-      player.replace(currentPage.audioSource);
+    const source = currentPage?.audioSource;
+    if (source) {
+      safe(() => player.replace(source));
       if (isAutoPlayingRef.current) {
-        player.play();
+        safe(() => player.play());
         setSpeechState('speaking');
       }
     }
@@ -52,16 +71,23 @@ export function useNarration(
   function toggleSpeech() {
     if (!currentPage?.hasAudio) return;
     if (speechState === 'speaking') {
-      player.pause();
+      safe(() => player.pause());
       setSpeechState('paused');
     } else if (speechState === 'paused') {
-      player.play();
+      safe(() => player.play());
       setSpeechState('speaking');
     } else {
-      player.play();
+      safe(() => player.play());
       setSpeechState('speaking');
     }
   }
 
-  return { speechState, toggleSpeech };
+  // Stop playback entirely — used when the reader loses focus so audio never
+  // continues (or stacks up) after the user navigates away.
+  const stop = useCallback(() => {
+    safe(() => playerRef.current.pause());
+    setSpeechState('idle');
+  }, []);
+
+  return { speechState, toggleSpeech, stop };
 }
