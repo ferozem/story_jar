@@ -2,18 +2,29 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { theme } from '@/constants/theme';
 
 interface Props {
-  moral: string;
+  moral?: string;
+  talkStarters?: string[];
   isFavorite: boolean;
   onToggleFavorite: () => void;
   onReadAnother: () => void;
 }
 
-export function LessonScreen({ moral, isFavorite, onToggleFavorite, onReadAnother }: Props) {
+export function LessonScreen({ moral, talkStarters, isFavorite, onToggleFavorite, onReadAnother }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.leaf}>🌱</Text>
       <Text style={styles.label}>THE LESSON</Text>
-      <Text style={styles.moral}>{`“${moral}”`}</Text>
+      {moral ? <Text style={styles.moral}>{`“${moral}”`}</Text> : null}
+
+      {talkStarters && talkStarters.length > 0 ? (
+        <View style={styles.grownups}>
+          <Text style={styles.grownupsTitle}>👋 For grown-ups</Text>
+          {talkStarters.map((t) => (
+            <Text key={t} style={styles.starter}>• {t}</Text>
+          ))}
+        </View>
+      ) : null}
+
       <Pressable
         style={({ pressed }) => [styles.btn, styles.primary, pressed && styles.pressed]}
         onPress={onToggleFavorite}
@@ -40,12 +51,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
   },
   leaf: { fontSize: 44 },
-  label: {
-    fontSize: 13,
-    letterSpacing: 3,
-    fontWeight: theme.fontWeights.bold,
-    color: '#c79a3a',
-  },
+  label: { fontSize: 13, letterSpacing: 3, fontWeight: theme.fontWeights.bold, color: '#c79a3a' },
   moral: {
     fontSize: 20,
     lineHeight: 30,
@@ -53,8 +59,22 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeights.bold,
     color: theme.colors.text,
     textAlign: 'center',
-    marginBottom: theme.spacing.md,
   },
+  grownups: {
+    alignSelf: 'stretch',
+    borderTopWidth: 1,
+    borderTopColor: theme.colors.border,
+    paddingTop: theme.spacing.md,
+    gap: 6,
+  },
+  grownupsTitle: {
+    fontSize: theme.fontSizes.caption,
+    fontWeight: theme.fontWeights.bold,
+    color: theme.colors.textSecondary,
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  starter: { fontSize: theme.fontSizes.caption, color: theme.colors.textSecondary, lineHeight: 20 },
   btn: {
     borderRadius: theme.radii.full,
     paddingVertical: 14,
