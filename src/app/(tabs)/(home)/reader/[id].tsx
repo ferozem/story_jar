@@ -16,9 +16,9 @@ export default function ReaderScreen() {
   const { width } = useWindowDimensions();
 
   const story = getStory(id);
-  const hasLesson = !!story?.moral;
+  const hasEnding = !!story?.moral;
   const startIndex = page ? Number(page) : 0;
-  const nav = usePageNavigation(story ?? null, { initialIndex: startIndex, hasLesson });
+  const nav = usePageNavigation(story ?? null, { initialIndex: startIndex, hasEnding });
 
   const favorites = useFavorites();
   const { setLast, clear } = useContinue();
@@ -26,7 +26,7 @@ export default function ReaderScreen() {
   // Record/clear continue position as the reader moves.
   useEffect(() => {
     if (!story) return;
-    if (nav.isLessonPage) { clear(); return; }
+    if (nav.isEndStep) { clear(); return; }
     if (nav.currentIndex >= 1 && nav.currentIndex <= nav.totalPages) {
       setLast(story.id, nav.currentIndex);
     }
@@ -84,10 +84,10 @@ export default function ReaderScreen() {
         {!nav.isTitlePage && (
           <Text style={styles.storyTitle} numberOfLines={1}>{story.title}</Text>
         )}
-        {!nav.isTitlePage && !nav.isLessonPage && (
+        {!nav.isTitlePage && !nav.isEndStep && (
           <Text style={styles.pageCounter}>{nav.currentIndex} / {nav.totalPages}</Text>
         )}
-        {(nav.isTitlePage || nav.isLessonPage) && <View style={styles.spacer} />}
+        {(nav.isTitlePage || nav.isEndStep) && <View style={styles.spacer} />}
         <Pressable onPress={() => favorites.toggle(story.id)} hitSlop={12}>
           <Text style={styles.heart}>{favorites.isFavorite(story.id) ? '♥' : '♡'}</Text>
         </Pressable>
@@ -97,7 +97,7 @@ export default function ReaderScreen() {
 
       {/* Page content */}
       <View style={styles.pageArea} {...nav.panHandlers}>
-        {nav.isLessonPage ? (
+        {nav.isEndStep ? (
           <LessonScreen
             moral={story.moral!}
             isFavorite={favorites.isFavorite(story.id)}
