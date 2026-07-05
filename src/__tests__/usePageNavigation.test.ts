@@ -229,3 +229,32 @@ describe('usePageNavigation pan gesture callbacks', () => {
     expect(result.current.currentIndex).toBe(0);
   });
 });
+
+describe('usePageNavigation options: initialIndex + lesson step', () => {
+  const story = {
+    id: 's', title: 's', readingTime: '2 min', category: 'Patience', moral: 'x',
+    pages: [
+      { text: 'p1', hasAudio: false },
+      { text: 'p2', hasAudio: false },
+    ],
+  } as Story;
+
+  test('starts at initialIndex', () => {
+    const { result } = renderHook(() => usePageNavigation(story, { initialIndex: 1 }));
+    expect(result.current.currentIndex).toBe(1);
+    expect(result.current.isTitlePage).toBe(false);
+  });
+
+  test('with lesson, advancing past last page lands on the lesson', () => {
+    const { result } = renderHook(() => usePageNavigation(story, { initialIndex: 2, hasLesson: true }));
+    expect(result.current.isLessonPage).toBe(false);
+    act(() => { result.current.goNext(); });
+    expect(result.current.isLessonPage).toBe(true);
+    expect(result.current.canGoNext).toBe(false);
+  });
+
+  test('without lesson, cannot advance past the last page', () => {
+    const { result } = renderHook(() => usePageNavigation(story, { initialIndex: 2, hasLesson: false }));
+    expect(result.current.canGoNext).toBe(false);
+  });
+});

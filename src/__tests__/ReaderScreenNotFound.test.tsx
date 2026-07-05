@@ -1,6 +1,10 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import ReaderScreen from '@/app/(tabs)/(home)/reader/[id]';
+import { AppDataProvider } from '@/state/AppData';
+
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'));
 
 const mockPush = jest.fn();
 
@@ -49,21 +53,21 @@ describe('ReaderScreen — story not found', () => {
   });
 
   it('renders without crashing when story is not found', () => {
-    expect(() => render(<ReaderScreen />)).not.toThrow();
+    expect(() => render(<AppDataProvider><ReaderScreen /></AppDataProvider>)).not.toThrow();
   });
 
   it('displays story not found message', () => {
-    const { getByText } = render(<ReaderScreen />);
+    const { getByText } = render(<AppDataProvider><ReaderScreen /></AppDataProvider>);
     expect(getByText('Story not found.')).toBeDefined();
   });
 
   it('shows back navigation link', () => {
-    const { getByText } = render(<ReaderScreen />);
+    const { getByText } = render(<AppDataProvider><ReaderScreen /></AppDataProvider>);
     expect(getByText('← StoryJar')).toBeDefined();
   });
 
   it('navigates to library when back link is pressed', () => {
-    const { getByText } = render(<ReaderScreen />);
+    const { getByText } = render(<AppDataProvider><ReaderScreen /></AppDataProvider>);
     fireEvent.press(getByText('← StoryJar'));
     expect(mockPush).toHaveBeenCalledWith('/library');
   });

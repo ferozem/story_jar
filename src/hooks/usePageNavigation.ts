@@ -6,6 +6,7 @@ export interface PageNavigation {
   currentIndex: number;
   totalPages: number;
   isTitlePage: boolean;
+  isLessonPage: boolean;
   currentPage: Page | null;
   canGoBack: boolean;
   canGoNext: boolean;
@@ -15,17 +16,25 @@ export interface PageNavigation {
   panHandlers: ReturnType<typeof PanResponder.create>['panHandlers'];
 }
 
-export function usePageNavigation(story: Story): PageNavigation {
-  const [currentIndex, setCurrentIndex] = useState(0);
+interface Options {
+  initialIndex?: number;
+  hasLesson?: boolean;
+}
+
+export function usePageNavigation(story: Story, options: Options = {}): PageNavigation {
+  const { initialIndex = 0, hasLesson = false } = options;
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const swipeStartX = useRef(0);
 
   const totalPages = story.pages.length;
+  // Content pages are 1..totalPages. When hasLesson, one extra step (totalPages + 1) is the lesson.
+  const maxIndex = hasLesson ? totalPages + 1 : totalPages;
   const isTitlePage = currentIndex === 0;
+  const isLessonPage = hasLesson && currentIndex === totalPages + 1;
   const canGoBack = currentIndex > 0;
-  const canGoNext = currentIndex < totalPages;
-  const progress = totalPages > 0 ? currentIndex / totalPages : 0;
-  // index 0 is the title page; content pages are at pages[currentIndex - 1]
-  const currentPage = !isTitlePage ? (story.pages[currentIndex - 1] ?? null) : null;
+  const canGoNext = currentIndex < maxIndex;
+  const progress = totalPages > 0 ? Math.min(currentIndex, totalPages) / totalPages : 0;
+  const currentPage = !isTitlePage && !isLessonPage ? (story.pages[currentIndex - 1] ?? null) : null;
 
   function goNext() { if (canGoNext) setCurrentIndex((i) => i + 1); }
   function goPrev() { if (canGoBack) setCurrentIndex((i) => i - 1); }
@@ -43,15 +52,8 @@ export function usePageNavigation(story: Story): PageNavigation {
   });
 
   return {
-    currentIndex,
-    totalPages,
-    isTitlePage,
-    currentPage,
-    canGoBack,
-    canGoNext,
-    progress,
-    goNext,
-    goPrev,
+    currentIndex, totalPages, isTitlePage, isLessonPage, currentPage,
+    canGoBack, canGoNext, progress, goNext, goPrev,
     panHandlers: panResponder.panHandlers,
   };
 }

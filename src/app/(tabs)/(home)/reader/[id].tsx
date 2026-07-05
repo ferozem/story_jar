@@ -1,20 +1,36 @@
 import { Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PageView } from '@/components/PageView';
+import { LessonScreen } from '@/components/LessonScreen';
 import { getStory } from '@/data/stories';
 import { theme } from '@/constants/theme';
 import { usePageNavigation } from '@/hooks/usePageNavigation';
 import { useNarration } from '@/hooks/useNarration';
+import { useFavorites, useContinue } from '@/state/AppData';
 
 export default function ReaderScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, page } = useLocalSearchParams<{ id: string; page?: string }>();
   const router = useRouter();
   const { width } = useWindowDimensions();
 
   const story = getStory(id);
-  const nav = usePageNavigation(story!);
+  const hasLesson = !!story?.moral;
+  const startIndex = page ? Number(page) : 0;
+  const nav = usePageNavigation(story!, { initialIndex: startIndex, hasLesson });
+
+  const favorites = useFavorites();
+  const { setLast, clear } = useContinue();
+
+  // Record/clear continue position as the reader moves.
+  useEffect(() => {
+    if (!story) return;
+    if (nav.isLessonPage) { clear(); return; }
+    if (nav.currentIndex >= 1 && nav.currentIndex <= nav.totalPages) {
+      setLast(story.id, nav.currentIndex);
+    }
+  }, [nav.currentIndex]);
 
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
 
@@ -68,17 +84,27 @@ export default function ReaderScreen() {
         {!nav.isTitlePage && (
           <Text style={styles.storyTitle} numberOfLines={1}>{story.title}</Text>
         )}
-        {!nav.isTitlePage && (
+        {!nav.isTitlePage && !nav.isLessonPage && (
           <Text style={styles.pageCounter}>{nav.currentIndex} / {nav.totalPages}</Text>
         )}
-        {nav.isTitlePage && <View style={styles.spacer} />}
+        {(nav.isTitlePage || nav.isLessonPage) && <View style={styles.spacer} />}
+        <Pressable onPress={() => favorites.toggle(story.id)} hitSlop={12}>
+          <Text style={styles.heart}>{favorites.isFavorite(story.id) ? '♥' : '♡'}</Text>
+        </Pressable>
       </View>
 
       <View style={styles.rule} />
 
       {/* Page content */}
       <View style={styles.pageArea} {...nav.panHandlers}>
-        {nav.isTitlePage ? (
+        {nav.isLessonPage ? (
+          <LessonScreen
+            moral={story.moral!}
+            isFavorite={favorites.isFavorite(story.id)}
+            onToggleFavorite={() => favorites.toggle(story.id)}
+            onReadAnother={() => router.push({ pathname: '/category/[category]', params: { category: story.category } })}
+          />
+        ) : nav.isTitlePage ? (
           <View style={styles.titlePageContent}>
             <Text style={styles.titlePageText}>{story.title}</Text>
             <Pressable style={styles.beginButton} onPress={nav.goNext}>
@@ -170,6 +196,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   spacer: { flex: 1 },
+  heart: { fontSize: 20, color: theme.colors.primary },
   rule: {
     height: 1,
     backgroundColor: theme.colors.border,
