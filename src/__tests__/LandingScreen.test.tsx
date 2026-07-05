@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import LandingScreen from '@/app/index';
+import LandingScreen from '@/app/(tabs)/(home)/index';
 
 const mockPush = jest.fn();
 

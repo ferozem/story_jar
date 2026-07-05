@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import CategoryScreen from '@/app/category/[category]';
+import CategoryScreen from '@/app/(tabs)/(home)/category/[category]';
 
 const mockPush = jest.fn();
 let mockParams: { category?: string } = { category: 'Honesty%20%26%20Trust' };

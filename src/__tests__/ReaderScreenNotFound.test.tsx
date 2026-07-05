@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import ReaderScreen from '@/app/reader/[id]';
+import ReaderScreen from '@/app/(tabs)/(home)/reader/[id]';
 
 const mockPush = jest.fn();
 

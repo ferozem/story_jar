@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react-native';
-import ReaderScreen from '@/app/reader/[id]';
+import ReaderScreen from '@/app/(tabs)/(home)/reader/[id]';
 
 const mockPush = jest.fn();
 // Captures the focus-effect cleanup so tests can simulate the screen blurring.
