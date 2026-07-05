@@ -3,7 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { PageView } from '@/components/PageView';
-import { LessonScreen } from '@/components/LessonScreen';
+import { StoryEndFlow } from '@/components/StoryEndFlow';
+import { VIRTUE_REFLECTIONS } from '@/data/virtue-reflections';
 import { getStory } from '@/data/stories';
 import { theme } from '@/constants/theme';
 import { usePageNavigation } from '@/hooks/usePageNavigation';
@@ -16,7 +17,8 @@ export default function ReaderScreen() {
   const { width } = useWindowDimensions();
 
   const story = getStory(id);
-  const hasEnding = !!story?.moral;
+  const reflection = story ? VIRTUE_REFLECTIONS[story.category] : undefined;
+  const hasEnding = !!reflection || !!story?.moral;
   const startIndex = page ? Number(page) : 0;
   const nav = usePageNavigation(story ?? null, { initialIndex: startIndex, hasEnding });
 
@@ -98,8 +100,9 @@ export default function ReaderScreen() {
       {/* Page content */}
       <View style={styles.pageArea} {...nav.panHandlers}>
         {nav.isEndStep ? (
-          <LessonScreen
-            moral={story.moral!}
+          <StoryEndFlow
+            story={story}
+            reflection={reflection}
             isFavorite={favorites.isFavorite(story.id)}
             onToggleFavorite={() => favorites.toggle(story.id)}
             onReadAnother={() => router.push({ pathname: '/category/[category]', params: { category: story.category } })}
