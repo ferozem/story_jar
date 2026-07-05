@@ -5,15 +5,22 @@ import { theme } from '@/constants/theme';
 interface Props {
   story: Pick<Story, 'title' | 'coverArt' | 'readingTime'>;
   onPress: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
-export function StoryCard({ story, onPress }: Props) {
+export function StoryCard({ story, onPress, isFavorite, onToggleFavorite }: Props) {
   return (
     <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
       {story.coverArt !== undefined
         ? <Image source={story.coverArt} style={styles.cover} resizeMode="cover" />
         : <View style={[styles.cover, styles.coverPlaceholder]} />
       }
+      {onToggleFavorite && (
+        <Pressable style={styles.heart} onPress={onToggleFavorite} hitSlop={10}>
+          <Text style={styles.heartText}>{isFavorite ? '♥' : '♡'}</Text>
+        </Pressable>
+      )}
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={2}>{story.title}</Text>
         <Text style={styles.readingTime}>{story.readingTime}</Text>
@@ -60,4 +67,11 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSizes.caption,
     color: theme.colors.textSecondary,
   },
+  heart: {
+    position: 'absolute', top: 8, right: 8,
+    width: 30, height: 30, borderRadius: 15,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  heartText: { fontSize: 16, color: theme.colors.primary },
 });

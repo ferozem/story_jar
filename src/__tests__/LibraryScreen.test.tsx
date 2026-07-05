@@ -1,6 +1,10 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import LibraryScreen from '@/app/(tabs)/(home)/library';
+import { AppDataProvider } from '@/state/AppData';
+
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'));
 
 const mockPush = jest.fn();
 
@@ -27,34 +31,34 @@ describe('LibraryScreen (shelf grid)', () => {
   });
 
   it('renders without crashing', () => {
-    expect(() => render(<LibraryScreen />)).not.toThrow();
+    expect(() => render(<AppDataProvider><LibraryScreen /></AppDataProvider>)).not.toThrow();
   });
 
   it('displays the StoryJar heading', () => {
-    const { getByText } = render(<LibraryScreen />);
+    const { getByText } = render(<AppDataProvider><LibraryScreen /></AppDataProvider>);
     expect(getByText('StoryJar')).toBeDefined();
   });
 
   it('renders a jar for each represented category', () => {
-    const { getByText } = render(<LibraryScreen />);
+    const { getByText } = render(<AppDataProvider><LibraryScreen /></AppDataProvider>);
     expect(getByText('Courage')).toBeDefined();
     expect(getByText('Honesty & Trust')).toBeDefined();
   });
 
   it('shows the story count on each jar', () => {
-    const { getByText } = render(<LibraryScreen />);
+    const { getByText } = render(<AppDataProvider><LibraryScreen /></AppDataProvider>);
     expect(getByText('2 stories')).toBeDefined(); // Courage
     expect(getByText('1 stories')).toBeDefined(); // Honesty & Trust
   });
 
   it('does not render categories that have no stories', () => {
-    const { queryByText } = render(<LibraryScreen />);
+    const { queryByText } = render(<AppDataProvider><LibraryScreen /></AppDataProvider>);
     expect(queryByText('Patience')).toBeNull();
     expect(queryByText('Forgiveness')).toBeNull();
   });
 
   it('navigates to the category route when a jar is pressed', () => {
-    const { getByText } = render(<LibraryScreen />);
+    const { getByText } = render(<AppDataProvider><LibraryScreen /></AppDataProvider>);
     fireEvent.press(getByText('Courage'));
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/category/[category]',
@@ -63,7 +67,7 @@ describe('LibraryScreen (shelf grid)', () => {
   });
 
   it('passes the full category name (incl. spaces and symbols) as a param', () => {
-    const { getByText } = render(<LibraryScreen />);
+    const { getByText } = render(<AppDataProvider><LibraryScreen /></AppDataProvider>);
     fireEvent.press(getByText('Honesty & Trust'));
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/category/[category]',
@@ -72,7 +76,7 @@ describe('LibraryScreen (shelf grid)', () => {
   });
 
   it('does not navigate before any jar is pressed', () => {
-    render(<LibraryScreen />);
+    render(<AppDataProvider><LibraryScreen /></AppDataProvider>);
     expect(mockPush).not.toHaveBeenCalled();
   });
 });

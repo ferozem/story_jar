@@ -12,11 +12,15 @@ import Svg, {
 } from 'react-native-svg';
 import { useRouter } from 'expo-router';
 import { CategoryIcon } from '@/components/CategoryIcon';
-import { getStories } from '@/data/stories';
+import { StoryOfTheDayCard } from '@/components/StoryOfTheDayCard';
+import { ContinueCard } from '@/components/ContinueCard';
+import { getStories, getStory } from '@/data/stories';
 import { cardThemeArt, landingArt } from '@/data/decorative-art';
+import { getStoryOfTheDay } from '@/data/story-of-the-day';
 import { StoryCategory, STORY_CATEGORIES } from '@/types/story';
 import { CATEGORY_CARD_THEMES, CATEGORY_COLORS, tintOnCream } from '@/constants/categories';
 import { theme } from '@/constants/theme';
+import { useContinue } from '@/state/AppData';
 
 type Shelf = { category: StoryCategory; count: number };
 
@@ -74,6 +78,9 @@ export default function LibraryScreen() {
   // Measured so the list can start below the pinned hero; the jars then scroll
   // up *under* the hero's curved edge. Seeded with an estimate to avoid a jump.
   const [heroHeight, setHeroHeight] = useState(190);
+  const today = getStoryOfTheDay(new Date());
+  const { last } = useContinue();
+  const continueStory = last ? getStory(last.storyId) : undefined;
 
   function renderItem({ item }: { item: Shelf }) {
     const color = CATEGORY_COLORS[item.category];
@@ -120,6 +127,19 @@ export default function LibraryScreen() {
         renderItem={renderItem}
         numColumns={2}
         columnWrapperStyle={styles.column}
+        ListHeaderComponent={
+          <View style={styles.featured}>
+            {continueStory && last && (
+              <ContinueCard
+                story={continueStory}
+                onPress={() => router.push({ pathname: '/reader/[id]', params: { id: continueStory.id, page: String(last.pageIndex) } })}
+              />
+            )}
+            {today && (
+              <StoryOfTheDayCard story={today} onPress={() => router.push(`/reader/${today.id}`)} />
+            )}
+          </View>
+        }
         contentContainerStyle={[
           styles.grid,
           { paddingTop: heroHeight + theme.spacing.sm, paddingBottom: insets.bottom + theme.spacing.xl },
@@ -171,6 +191,7 @@ const styles = StyleSheet.create({
   grid: {
     gap: theme.spacing.md,
   },
+  featured: { gap: theme.spacing.sm, paddingHorizontal: theme.spacing.md, paddingBottom: theme.spacing.sm },
   column: {
     paddingHorizontal: theme.spacing.md, // inset rows so the hero stays full-bleed
     gap: theme.spacing.md,

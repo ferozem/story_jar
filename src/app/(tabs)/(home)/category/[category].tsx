@@ -8,6 +8,7 @@ import { getStories } from '@/data/stories';
 import { categoryHeroArt } from '@/data/decorative-art';
 import { Story, StoryCategory, STORY_CATEGORIES } from '@/types/story';
 import { theme } from '@/constants/theme';
+import { useFavorites } from '@/state/AppData';
 
 function resolveCategory(raw?: string): StoryCategory | undefined {
   if (!raw) return undefined;
@@ -22,6 +23,7 @@ export default function CategoryScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
+  const favorites = useFavorites();
 
   const category = resolveCategory(rawParam);
   const stories = category ? getStories().filter((s) => s.category === category) : [];
@@ -68,7 +70,14 @@ export default function CategoryScreen() {
   );
 
   function renderItem({ item }: { item: Story }) {
-    return <StoryCard story={item} onPress={() => router.push(`/reader/${item.id}`)} />;
+    return (
+      <StoryCard
+        story={item}
+        onPress={() => router.push(`/reader/${item.id}`)}
+        isFavorite={favorites.isFavorite(item.id)}
+        onToggleFavorite={() => favorites.toggle(item.id)}
+      />
+    );
   }
 
   return (
