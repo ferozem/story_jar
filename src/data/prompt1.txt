@@ -1,0 +1,290 @@
+You are working inside a local writing project repository.
+I have provided two important files in this project:
+1.	C:\feroze\code-c_drive\story_time\src\data\CreativeMethod.docx
+This file contains the complete story-writing framework, rules, quality standards, tone, structure, length, humour rules, anti-predictability rules, and moral requirements.
+2.	C:\feroze\code-c_drive\story_time\src\data\best20inspirationals.docx
+This file contains the shortlisted “Best 20 Story Inspirations to Use.” These are not stories to retell directly. They are invisible moral seeds inspired by Islamic history, Prophet Muhammad ﷺ, Sahaba, and related moral incidents.
+Your task is to create a full local backlog and begin producing the story drafts.
+Important: Do not ask me for confirmation before starting. Make reasonable decisions and proceed.
+Main Goal
+Create one original children’s moral-adventure story for each inspiration in story-inspirations.md, while strictly following creative-method.md.
+Each story must be:
+•	350–450 words
+•	Original
+•	Universal and child-friendly
+•	Suitable for children aged 6–10
+•	Inspired by the moral pattern only
+•	Not a direct retelling of the historical event
+•	Not visibly Islamic or historical in the child-facing story
+•	Warm, smooth, natural, and believable
+•	Lightly humorous in a realistic way
+•	Morally clear without becoming preachy
+•	Written in simple English
+•	Ended with a clear section titled: Moral of the Story
+The final stories should feel like everyday child adventures, not religious-history adaptations.
+Step 1: Inspect the Files
+Read both files fully:
+•	creative-method.md
+•	story-inspirations.md
+Extract the working rules from creative-method.md.
+Extract each inspiration item from story-inspirations.md.
+If the file names are slightly different, locate the closest matching files by name and content.
+Step 3: Create a Local Backlog
+Create one backlog issue for each inspiration item.
+Each issue should be a markdown file inside backlog/.
+Use this naming pattern:
+backlog/issue-001-story-title.md
+backlog/issue-002-story-title.md
+...
+Each issue must include:
+# Issue 001: Story Title
+
+## Status
+Planned
+
+## Inspiration Seed
+Brief internal description of the inspiration.
+
+## Invisible Moral Pattern
+What moral pattern is being extracted from the original incident?
+
+## Child-World Transformation
+How this will become a child-friendly everyday story.
+
+## Main Moral Value
+One primary value only.
+
+## Secondary Value
+Optional, only if useful.
+
+## Suggested Setting
+School / home / park / market / trail / neighbourhood / family trip / playground / community hall etc.
+
+## Main Character
+Child name, age, personality.
+
+## Supporting Characters
+Brief list.
+
+## Natural Humour Idea
+A realistic small humour moment.
+
+## Moral Problem
+What choice does the child face?
+
+## Resolution Direction
+How the child grows or acts.
+
+## Quality Checklist
+- [ ] 350–450 words
+- [ ] Child-friendly
+- [ ] Original plot
+- [ ] Inspiration source invisible
+- [ ] No direct religious or historical reference
+- [ ] Natural humour included
+- [ ] Clear moral choice
+- [ ] Clear consequence
+- [ ] Moral of the Story included
+- [ ] Not too similar to previous story
+Step 4: Create a Master Backlog Index
+Create:
+backlog/index.md
+This file should contain a table with:
+•	Issue number
+•	Working title
+•	Inspiration seed
+•	Main moral value
+•	Setting
+•	Status
+•	Story draft path
+Use statuses:
+•	Planned
+•	Drafting
+•	Draft Complete
+•	Needs Revision
+•	Final Ready
+Step 5: Generate the Stories
+After creating the backlog, immediately start writing the stories.
+Do not stop after creating issues.
+For each issue:
+1.	Mark the issue as Drafting.
+2.	Write a full story draft.
+3.	Save it in:
+stories/drafts/story-001-title.md
+stories/drafts/story-002-title.md
+...
+Each story file must use this format:
+# Story Title
+
+## Story
+
+[Full story here, 350–450 words]
+
+## Moral of the Story
+
+[Simple child-friendly moral]
+
+---
+
+## Internal Notes
+
+### Inspiration Seed
+[Short private note. This may mention the historical inspiration, but it must not appear inside the story itself.]
+
+### Moral Pattern Used
+[Explain the extracted moral pattern.]
+
+### Transformation Notes
+[Explain how the original inspiration was transformed into a child-world situation.]
+
+### Quality Check
+- Word count:
+- Natural humour used:
+- Main moral:
+- Setting:
+- Inspiration invisible: Yes/No
+- Religious/historical references removed: Yes/No
+- Similarity risk with previous stories:
+Important: The Internal Notes section is for the author only. The actual child-facing story must not reveal the Islamic, historical, or Sahaba inspiration.
+Step 6: Anti-Repetition Rules
+Before writing each story, check previous stories and vary:
+•	Setting
+•	Character type
+•	Moral pressure
+•	Humour type
+•	Guide/resolution source
+•	Ending pattern
+Do not make every story happen in school.
+Do not make every story end with a teacher explaining the lesson.
+Do not always use lost objects, broken objects, competitions, or confession endings.
+Do not always place humour at the beginning.
+Use variety across the collection.
+Step 7: Preferred Story Inspiration Transformations
+Use the inspiration list as the source, but transform each one creatively.
+Examples of valid transformation:
+•	Hijrah cave → children separated on a nature trail, one stays calm and reassures the other.
+•	Ta’if mercy → child forgives someone who mocked him and later helps that person.
+•	Bedouin mosque incident → new child makes a messy mistake, others react harshly, main character corrects gently.
+•	Ansari guest → child shares limited food with someone who forgot lunch.
+•	Water passed to others → children keep offering water to one another on sports day.
+•	Aishah and Umm Sulaym carrying water → child helps tired students during an event instead of chasing applause.
+•	Talha’s sacrifice → child gives up chance to win in order to help someone.
+•	Salamah’s chase → child notices a problem and acts quickly but safely.
+•	Ka‘b ibn Malik → child tells the truth instead of making an easy excuse.
+•	Hasan ibn Ali → child gives up leadership ego to make peace.
+•	Abu Dharr corrected → child learns not to mock someone’s background, accent, clothes, or lunch.
+•	Julaibib not forgotten → child notices and includes someone overlooked.
+These examples are only direction. Create original plots, not mechanical copies.
+Step 8: Story Quality Requirements
+Each story must pass this test:
+1.	Is it between 350 and 450 words?
+2.	Does it begin with enough simple context?
+3.	Is the language easy for children?
+4.	Is there a clear moral problem?
+5.	Does the main child make a meaningful choice?
+6.	Is there at least one natural humorous moment?
+7.	Is the humour believable and not cartoonish?
+8.	Is the inspiration invisible?
+9.	Are there no direct Islamic, religious, battlefield, or historical references in the child-facing story?
+10.	Is the ending warm and satisfying?
+11.	Is the moral clear and practical?
+12.	Does it feel different from the previous stories?
+If a story fails, revise it before moving to the next one.
+Step 9: Create a Progress Report
+Create:
+reports/progress.md
+Include:
+# Story Production Progress
+
+## Files Read
+- creative-method.md
+- story-inspirations.md
+
+## Total Inspirations Found
+[number]
+
+## Backlog Issues Created
+[number]
+
+## Stories Drafted
+[number]
+
+## Stories Still Pending
+[number]
+
+## Notes
+[Any issues, assumptions, or risks]
+Update this report after every batch of stories.
+Step 10: Work in Batches
+Generate the stories in batches of 5.
+After each batch:
+1.	Update the backlog issue statuses.
+2.	Update backlog/index.md.
+3.	Update reports/progress.md.
+4.	Check whether the last 5 stories feel too similar.
+5.	Revise any story that violates the creative method.
+Continue until all 20 stories have drafts.
+Step 11: Final Combined Document
+After all drafts are complete, create:
+stories/final/combined-story-collection.md
+This document should contain only the child-facing stories.
+Do not include internal inspiration notes in the combined final document.
+Use this structure:
+# Moral Adventures Story Collection
+
+## Story 1: [Title]
+
+[Story text]
+
+## Moral of the Story
+
+[Moral]
+
+---
+
+## Story 2: [Title]
+
+[Story text]
+
+## Moral of the Story
+
+[Moral]
+
+---
+Step 12: Final Review
+Create:
+reports/final-quality-review.md
+For each story, include:
+•	Title
+•	Word count
+•	Main moral
+•	Setting
+•	Humour type
+•	Inspiration visibility check
+•	Similarity risk
+•	Pass/Needs revision
+Very Important Writing Rules
+•	Do not directly mention Prophet Muhammad ﷺ, Sahaba, Islam, Qur’an, Hadith, battles, Hijrah, or any original historical event inside the child-facing stories.
+•	Do not use preachy language.
+•	Do not make the story unrealistic.
+•	Do not use forced slapstick humour.
+•	Do not copy the inspiration incident.
+•	Do not make the story too serious for children.
+•	Do not make every story school-based.
+•	Do not use overly advanced vocabulary.
+•	Do not exceed 450 words per story.
+•	Do not go below 350 words per story.
+Final Output Expected
+At the end of the work, the repository should contain:
+backlog/index.md
+backlog/issue-001-*.md
+backlog/issue-002-*.md
+...
+stories/drafts/story-001-*.md
+stories/drafts/story-002-*.md
+...
+stories/final/combined-story-collection.md
+reports/progress.md
+reports/final-quality-review.md
+Begin now by reading the two files, creating the backlog, and drafting the first batch of 5 stories.
+

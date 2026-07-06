@@ -42,3 +42,11 @@ example
 /ios
 /android
 .superpowers/
+
+# tool artifacts / local caches
+/coverage/
+/tmp/
+.scratch/
+.codex/
+.agents/
+graphify-out/
