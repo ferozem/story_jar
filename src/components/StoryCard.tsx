@@ -7,15 +7,21 @@ interface Props {
   onPress: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  read?: boolean;
 }
 
-export function StoryCard({ story, onPress, isFavorite, onToggleFavorite }: Props) {
+export function StoryCard({ story, onPress, isFavorite, onToggleFavorite, read }: Props) {
   return (
     <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
       {story.coverArt !== undefined
         ? <Image source={story.coverArt} style={styles.cover} resizeMode="cover" />
         : <View style={[styles.cover, styles.coverPlaceholder]} />
       }
+      {read && (
+        <View style={styles.readBadge}>
+          <Text style={styles.readCheck}>✓</Text>
+        </View>
+      )}
       {onToggleFavorite && (
         <Pressable style={styles.heart} onPress={onToggleFavorite} hitSlop={10}>
           <Text style={styles.heartText}>{isFavorite ? '♥' : '♡'}</Text>
@@ -74,4 +80,11 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   heartText: { fontSize: 16, color: theme.colors.primary },
+  readBadge: {
+    position: 'absolute', top: 8, left: 8,
+    width: 26, height: 26, borderRadius: 13,
+    backgroundColor: theme.colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  readCheck: { fontSize: 15, color: '#FFFFFF', fontWeight: theme.fontWeights.bold },
 });

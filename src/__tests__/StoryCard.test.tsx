@@ -109,6 +109,20 @@ describe('StoryCard', () => {
     expect(typeof mockPress).toBe('function');
   });
 
+  it('shows a ✓ badge when read', () => {
+    const { getByText } = render(
+      <StoryCard story={mockStory} onPress={jest.fn()} read />
+    );
+    expect(getByText('✓')).toBeDefined();
+  });
+
+  it('hides the ✓ badge when unread', () => {
+    const { queryByText } = render(
+      <StoryCard story={mockStory} onPress={jest.fn()} />
+    );
+    expect(queryByText('✓')).toBeNull();
+  });
+
   it('renders a placeholder when coverArt is undefined', () => {
     const mockPress = jest.fn();
     const { getByText } = render(

@@ -3,12 +3,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { StoryCard } from '@/components/StoryCard';
 import { getStories } from '@/data/stories';
-import { useFavorites } from '@/state/AppData';
+import { useFavorites, useRead } from '@/state/AppData';
 import { theme } from '@/constants/theme';
 
 export default function MyJarScreen() {
   const router = useRouter();
   const favorites = useFavorites();
+  const read = useRead();
   const stories = getStories().filter((s) => favorites.ids.has(s.id));
 
   return (
@@ -30,6 +31,7 @@ export default function MyJarScreen() {
               onPress={() => router.push(`/reader/${item.id}`)}
               isFavorite
               onToggleFavorite={() => favorites.toggle(item.id)}
+              read={read.isRead(item.id)}
             />
           )}
         />

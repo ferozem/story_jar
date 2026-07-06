@@ -4,9 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const STORAGE_KEY = '@storyjar/appdata';
 
 export type LastRead = { storyId: string; pageIndex: number; updatedAt: number };
-export type AppData = { favorites: string[]; lastRead: LastRead | null };
+export type AppData = { favorites: string[]; lastRead: LastRead | null; readIds: string[] };
 
-const EMPTY: AppData = { favorites: [], lastRead: null };
+const EMPTY: AppData = { favorites: [], lastRead: null, readIds: [] };
 
 type Ctx = {
   hydrated: boolean;
@@ -70,6 +70,20 @@ export function useFavorites() {
           ? prev.favorites.filter((f) => f !== id)
           : [...prev.favorites, id],
       })),
+  };
+}
+
+export function useRead() {
+  const { data, setData } = useCtx();
+  const ids = new Set(data.readIds);
+  return {
+    isRead: (id: string) => ids.has(id),
+    markRead: (id: string) => {
+      if (ids.has(id)) return; // already read — skip the redundant storage write
+      setData((prev) =>
+        prev.readIds.includes(id) ? prev : { ...prev, readIds: [...prev.readIds, id] },
+      );
+    },
   };
 }
 
