@@ -9,6 +9,7 @@ const baseStory = {
   id: 'test-story',
   title: 'Test Story',
   readingTime: '2 min',
+  category: 'Courage',
   pages: [{ text: 'Page one.' }, { text: 'Page two.' }],
 };
 

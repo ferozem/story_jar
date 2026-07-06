@@ -114,11 +114,32 @@ describe('useNarration', () => {
     expect(result.current.speechState).toBe('idle');
   });
 
-  it('returns Narration interface with speechState and toggleSpeech', () => {
+  it('returns Narration interface with speechState, toggleSpeech and stop', () => {
     const { result } = renderHook(() => useNarration(mockPage));
     expect(result.current).toHaveProperty('speechState');
     expect(result.current).toHaveProperty('toggleSpeech');
     expect(typeof result.current.toggleSpeech).toBe('function');
+    expect(typeof result.current.stop).toBe('function');
+  });
+
+  it('stop() resets speech state to idle from speaking', () => {
+    const { result } = renderHook(() => useNarration(mockPage));
+
+    act(() => { result.current.toggleSpeech(); });
+    expect(result.current.speechState).toBe('speaking');
+
+    act(() => { result.current.stop(); });
+    expect(result.current.speechState).toBe('idle');
+  });
+
+  it('exposes a stable stop() identity across renders', () => {
+    const { result, rerender } = renderHook(
+      ({ page }: { page: Page }) => useNarration(page),
+      { initialProps: { page: mockPage } }
+    );
+    const first = result.current.stop;
+    act(() => { rerender({ page: mockPage }); });
+    expect(result.current.stop).toBe(first);
   });
 
   it('handles transitions between multiple pages', () => {

@@ -5,11 +5,26 @@ export interface Page {
   audioSource?: number;
 }
 
+export const STORY_CATEGORIES = [
+  'Honesty & Trust',
+  'Humility & Service',
+  'Kindness & Compassion',
+  'Sharing & Generosity',
+  'Forgiveness',
+  'Patience',
+  'Courage',
+  'Fairness',
+  'Gratitude & Contentment',
+] as const;
+
+export type StoryCategory = (typeof STORY_CATEGORIES)[number];
+
 export interface Story {
   id: string;
   title: string;
   coverArt?: number;
   readingTime: string;
+  category: StoryCategory;
   moral?: string;
   pages: Page[];
 }

@@ -1,4 +1,5 @@
 import { coverArt, audioAssets } from '@/data/asset-manifest';
+import { getStories } from '@/data/stories';
 
 describe('asset-manifest', () => {
   describe('coverArt', () => {
@@ -7,10 +8,15 @@ describe('asset-manifest', () => {
       expect(coverArt).not.toBeNull();
     });
 
-    it('has cover art for all 6 stories', () => {
+    it('has cover art for every story', () => {
       const keys = Object.keys(coverArt);
-      // Cover art is added separately from audio; stays at 6 until images are generated for new stories.
-      expect(keys.length).toBe(6);
+      expect(keys.length).toBe(getStories().length);
+    });
+
+    it('every loaded story has cover art', () => {
+      getStories().forEach((story) => {
+        expect(story.coverArt).toBeDefined();
+      });
     });
 
     it('has cover art for the-torn-map', () => {
@@ -35,6 +41,22 @@ describe('asset-manifest', () => {
 
     it('has cover art for the-boy-near-the-gate', () => {
       expect(coverArt['the-boy-near-the-gate']).toBeDefined();
+    });
+
+    it('has cover art for the-trail-marker-promise', () => {
+      expect(coverArt['the-trail-marker-promise']).toBeDefined();
+    });
+
+    it('has cover art for the-kindness-round', () => {
+      expect(coverArt['the-kindness-round']).toBeDefined();
+    });
+
+    it('has cover art for the-spilled-paint-plan', () => {
+      expect(coverArt['the-spilled-paint-plan']).toBeDefined();
+    });
+
+    it('has cover art for the-button-volcano', () => {
+      expect(coverArt['the-button-volcano']).toBeDefined();
     });
 
     it('all cover art values are defined objects (require results)', () => {

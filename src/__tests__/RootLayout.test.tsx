@@ -10,6 +10,9 @@ jest.mock('expo-status-bar', () => ({
   StatusBar: () => null,
 }));
 
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock'));
+
 describe('RootLayout', () => {
   it('renders without crashing', () => {
     expect(() => render(<RootLayout />)).not.toThrow();

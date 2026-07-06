@@ -7,6 +7,7 @@ const mockStory: Story = {
   title: 'Test Story',
   coverArt: 1,
   readingTime: '2 min',
+  category: 'Courage',
   pages: [
     { text: 'Page 1', hasAudio: false },
     { text: 'Page 2', hasAudio: false },
@@ -25,6 +26,13 @@ describe('usePageNavigation', () => {
   it('returns correct total pages', () => {
     const { result } = renderHook(() => usePageNavigation(mockStory));
     expect(result.current.totalPages).toBe(3);
+  });
+
+  it('tolerates a null story without throwing (reader not-found path)', () => {
+    const { result } = renderHook(() => usePageNavigation(null));
+    expect(result.current.totalPages).toBe(0);
+    expect(result.current.currentPage).toBeNull();
+    expect(result.current.canGoNext).toBe(false);
   });
 
   it('navigates forward with goNext', () => {
@@ -226,5 +234,34 @@ describe('usePageNavigation pan gesture callbacks', () => {
       capturedConfig.onPanResponderRelease({ nativeEvent: { pageX: 120 } });
     });
     expect(result.current.currentIndex).toBe(0);
+  });
+});
+
+describe('usePageNavigation options: initialIndex + end step', () => {
+  const story = {
+    id: 's', title: 's', readingTime: '2 min', category: 'Patience', moral: 'x',
+    pages: [
+      { text: 'p1', hasAudio: false },
+      { text: 'p2', hasAudio: false },
+    ],
+  } as Story;
+
+  test('starts at initialIndex', () => {
+    const { result } = renderHook(() => usePageNavigation(story, { initialIndex: 1 }));
+    expect(result.current.currentIndex).toBe(1);
+    expect(result.current.isTitlePage).toBe(false);
+  });
+
+  test('with ending, advancing past last page lands on the end step', () => {
+    const { result } = renderHook(() => usePageNavigation(story, { initialIndex: 2, hasEnding: true }));
+    expect(result.current.isEndStep).toBe(false);
+    act(() => { result.current.goNext(); });
+    expect(result.current.isEndStep).toBe(true);
+    expect(result.current.canGoNext).toBe(false);
+  });
+
+  test('without ending, cannot advance past the last page', () => {
+    const { result } = renderHook(() => usePageNavigation(story, { initialIndex: 2, hasEnding: false }));
+    expect(result.current.canGoNext).toBe(false);
   });
 });
