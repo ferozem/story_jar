@@ -1,4 +1,5 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Story } from '@/types/story';
 import { theme } from '@/constants/theme';
 
@@ -11,7 +12,7 @@ export function ContinueCard({ story, onPress }: Props) {
   return (
     <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
       {story.coverArt !== undefined && (
-        <Image source={story.coverArt} style={styles.thumb} resizeMode="cover" />
+        <Image source={story.coverArt} style={styles.thumb} contentFit="cover" />
       )}
       <View style={styles.body}>
         <Text style={styles.kicker}>▸ CONTINUE READING</Text>

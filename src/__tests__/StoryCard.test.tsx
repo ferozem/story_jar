@@ -5,7 +5,7 @@ import { Story } from '@/types/story';
 
 const mockStory: Pick<Story, 'title' | 'coverArt' | 'readingTime'> = {
   title: 'The Magical Adventure',
-  coverArt: 1,
+  coverArt: 'https://cdn/cover.jpg',
   readingTime: '5 min',
 };
 
@@ -79,7 +79,7 @@ describe('StoryCard', () => {
     const mockPress = jest.fn();
     const { queryByText } = render(
       <StoryCard
-        story={{ ...mockStory, coverArt: 999 }}
+        story={{ ...mockStory, coverArt: 'https://cdn/other.jpg' }}
         onPress={mockPress}
       />
     );

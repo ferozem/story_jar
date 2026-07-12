@@ -1,4 +1,5 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { Story } from '@/types/story';
 import { theme } from '@/constants/theme';
 
@@ -14,7 +15,7 @@ export function StoryCard({ story, onPress, isFavorite, onToggleFavorite, read }
   return (
     <Pressable style={({ pressed }) => [styles.card, pressed && styles.pressed]} onPress={onPress}>
       {story.coverArt !== undefined
-        ? <Image source={story.coverArt} style={styles.cover} resizeMode="cover" />
+        ? <Image source={story.coverArt} style={styles.cover} contentFit="cover" />
         : <View style={[styles.cover, styles.coverPlaceholder]} />
       }
       {read && (

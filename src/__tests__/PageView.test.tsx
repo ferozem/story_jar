@@ -20,7 +20,7 @@ const mockPageWithMultipleParagraphs: Page = {
 
 const mockPageWithIllustration: Page = {
   text: 'Page with illustration.',
-  illustration: 123,
+  illustration: 'https://cdn/img.jpg',
   hasAudio: false,
 };
 
@@ -100,7 +100,7 @@ describe('PageView', () => {
     const pageWithAudio: Page = {
       text: 'Page with audio.',
       hasAudio: true,
-      audioSource: 456,
+      audioSource: 'https://cdn/a.mp3',
     };
     const { getByText } = render(
       <PageView page={pageWithAudio} width={400} />
