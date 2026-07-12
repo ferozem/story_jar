@@ -1,35 +1,25 @@
 import { assembleStory } from '@/data/story-assembler';
+import type { ManifestStory } from '@/data/content-manifest';
 
-jest.mock('@/data/asset-manifest', () => ({
-  coverArt: { 'test-story': 1 },
-  audioAssets: { 'test-story': [10, 11] },
-}));
-
-const baseStory = {
-  id: 'test-story',
-  title: 'Test Story',
-  readingTime: '2 min',
-  category: 'Courage',
-  pages: [{ text: 'Page one.' }, { text: 'Page two.' }],
+const entry: ManifestStory = {
+  id: 's1', title: 'T', readingTime: '2 min', category: 'Patience', moral: 'm',
+  cover: 'stories/s1/cover-vibrant.jpg',
+  pages: [{ text: 'a', audio: 'audio/s1/page-0.mp3' }, { text: 'b' }],
 };
 
 describe('assembleStory', () => {
-  it('sets hasAudio true and attaches audioSource when audio assets match pages', () => {
-    const story = assembleStory(baseStory);
-    expect(story.pages[0].hasAudio).toBe(true);
-    expect(story.pages[0].audioSource).toBe(10);
-    expect(story.pages[1].audioSource).toBe(11);
+  it('resolves cover + audio to absolute urls and sets hasAudio per page', () => {
+    const s = assembleStory(entry, 'https://cdn/');
+    expect(s.coverArt).toBe('https://cdn/stories/s1/cover-vibrant.jpg');
+    expect(s.pages[0].hasAudio).toBe(true);
+    expect(s.pages[0].audioSource).toBe('https://cdn/audio/s1/page-0.mp3');
+    expect(s.pages[1].hasAudio).toBe(false);
+    expect(s.pages[1].audioSource).toBeUndefined();
   });
 
-  it('throws when audio asset count does not match page count', () => {
-    const mismatch = { ...baseStory, pages: [{ text: 'Only one page.' }] };
-    expect(() => assembleStory(mismatch)).toThrow(/audio asset count/);
-  });
-
-  it('sets hasAudio false when no audio assets exist for the story', () => {
-    const noAudio = { ...baseStory, id: 'unknown-story' };
-    const story = assembleStory(noAudio);
-    expect(story.pages[0].hasAudio).toBe(false);
-    expect(story.pages[0].audioSource).toBeUndefined();
+  it('leaves coverArt undefined when the entry has no cover', () => {
+    const noCover: ManifestStory = { ...entry, cover: undefined };
+    const s = assembleStory(noCover, 'https://cdn/');
+    expect(s.coverArt).toBeUndefined();
   });
 });

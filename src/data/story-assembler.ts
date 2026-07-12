@@ -1,32 +1,20 @@
 import { Story, StoryCategory, Page } from '@/types/story';
-import { coverArt, audioAssets } from './asset-manifest';
+import { ManifestStory, resolveUrl } from './content-manifest';
 
-type RawPage = { text: string };
-type RawStory = { id: string; title: string; readingTime: string; category: string; moral?: string; pages: RawPage[] };
-
-export function assembleStory(raw: RawStory): Story {
-  const audio = audioAssets[raw.id] ?? [];
-
-  if (audio.length > 0 && audio.length !== raw.pages.length) {
-    throw new Error(
-      `Story "${raw.id}": audio asset count (${audio.length}) does not match page count (${raw.pages.length}). ` +
-      `Run scripts/generate-audio.mjs to regenerate missing files.`
-    );
-  }
-
-  const pages: Page[] = raw.pages.map((p, i) => ({
-    text: p.text,
-    hasAudio: audio.length > 0,
-    audioSource: audio[i],
-  }));
+// Builds a runtime Story from a manifest entry, resolving relative asset keys to absolute URLs.
+export function assembleStory(entry: ManifestStory, baseUrl: string): Story {
+  const pages: Page[] = entry.pages.map((p) => {
+    const audioSource = resolveUrl(baseUrl, p.audio);
+    return { text: p.text, hasAudio: audioSource != null, audioSource };
+  });
 
   return {
-    id: raw.id,
-    title: raw.title,
-    readingTime: raw.readingTime,
-    category: raw.category as StoryCategory,
-    coverArt: coverArt[raw.id],
-    moral: raw.moral,
+    id: entry.id,
+    title: entry.title,
+    readingTime: entry.readingTime,
+    category: entry.category as StoryCategory,
+    coverArt: resolveUrl(baseUrl, entry.cover),
+    moral: entry.moral,
     pages,
   };
 }
