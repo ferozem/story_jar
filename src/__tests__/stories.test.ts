@@ -24,13 +24,12 @@ describe('stories module', () => {
       });
     });
 
-    it('stories with coverArt have a valid asset reference', () => {
+    it('stories with coverArt have a valid remote URL', () => {
       const stories = getStories();
       stories.forEach((story) => {
         if (story.coverArt !== undefined) {
-          // Metro (production) returns a number; Jest returns a module object
-          expect(['number', 'object']).toContain(typeof story.coverArt);
-          expect(story.coverArt).not.toBeNull();
+          expect(typeof story.coverArt).toBe('string');
+          expect(story.coverArt).toMatch(/^https?:\/\//);
         }
       });
     });
