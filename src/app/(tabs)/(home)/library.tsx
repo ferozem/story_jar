@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlatList, Image, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,6 +15,7 @@ import { CategoryIcon } from '@/components/CategoryIcon';
 import { StoryOfTheDayCard } from '@/components/StoryOfTheDayCard';
 import { ContinueCard } from '@/components/ContinueCard';
 import { getStories, getStory } from '@/data/stories';
+import { useCatalogVersion } from '@/state/ContentProvider';
 import { cardThemeArt, landingArt } from '@/data/decorative-art';
 import { getStoryOfTheDay } from '@/data/story-of-the-day';
 import { StoryCategory, STORY_CATEGORIES } from '@/types/story';
@@ -24,13 +25,20 @@ import { useContinue, useFavorites } from '@/state/AppData';
 
 type Shelf = { category: StoryCategory; count: number };
 
-const shelves: Shelf[] = STORY_CATEGORIES
-  .map((category) => ({
-    category,
-    count: getStories().filter((s) => s.category === category).length,
-  }))
-  .filter((s) => s.count > 0)
-  .sort((a, b) => b.count - a.count);
+// Shelf counts derived from the current catalog. Kept as a hook so it recomputes
+// when the remote manifest swaps in (new stories change the per-category counts).
+function useShelves(catalogVersion: string): Shelf[] {
+  return useMemo(
+    () =>
+      STORY_CATEGORIES.map((category) => ({
+        category,
+        count: getStories().filter((s) => s.category === category).length,
+      }))
+        .filter((s) => s.count > 0)
+        .sort((a, b) => b.count - a.count),
+    [catalogVersion],
+  );
+}
 
 function Hero({ topInset, height }: { topInset: number; height: number }) {
   const { width } = useWindowDimensions();
@@ -78,6 +86,8 @@ export default function LibraryScreen() {
   // Measured so the list can start below the pinned hero; the jars then scroll
   // up *under* the hero's curved edge. Seeded with an estimate to avoid a jump.
   const [heroHeight, setHeroHeight] = useState(190);
+  const catalogVersion = useCatalogVersion();
+  const shelves = useShelves(catalogVersion);
   const today = getStoryOfTheDay(new Date());
   const { last } = useContinue();
   const favorites = useFavorites();

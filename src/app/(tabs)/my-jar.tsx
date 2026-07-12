@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { StoryCard } from '@/components/StoryCard';
 import { getStories } from '@/data/stories';
+import { useCatalogVersion } from '@/state/ContentProvider';
 import { useFavorites, useRead } from '@/state/AppData';
 import { theme } from '@/constants/theme';
 
@@ -10,6 +11,7 @@ export default function MyJarScreen() {
   const router = useRouter();
   const favorites = useFavorites();
   const read = useRead();
+  useCatalogVersion(); // subscribe: re-render (and re-read getStories) when remote catalog swaps in
   const stories = getStories().filter((s) => favorites.ids.has(s.id));
 
   return (

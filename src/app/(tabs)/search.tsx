@@ -6,6 +6,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { StoryCard } from '@/components/StoryCard';
 import { searchStories } from '@/data/story-search';
 import { getStories } from '@/data/stories';
+import { useCatalogVersion } from '@/state/ContentProvider';
 import { useFavorites, useRead } from '@/state/AppData';
 import { theme } from '@/constants/theme';
 
@@ -28,7 +29,8 @@ export default function SearchScreen() {
   const favorites = useFavorites();
   const read = useRead();
   const [query, setQuery] = useState('');
-  const stories = useMemo(() => getStories(), []);
+  const catalogVersion = useCatalogVersion();
+  const stories = useMemo(() => getStories(), [catalogVersion]); // re-read when remote catalog swaps in
   const results = useMemo(() => searchStories(stories, query), [query, stories]);
   const hasQuery = query.trim().length > 0;
 

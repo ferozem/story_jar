@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { StoryCard } from '@/components/StoryCard';
 import { getStories } from '@/data/stories';
+import { useCatalogVersion } from '@/state/ContentProvider';
 import { categoryHeroArt } from '@/data/decorative-art';
 import { Story, StoryCategory, STORY_CATEGORIES } from '@/types/story';
 import { theme } from '@/constants/theme';
@@ -25,6 +26,7 @@ export default function CategoryScreen() {
   const { height } = useWindowDimensions();
   const favorites = useFavorites();
   const read = useRead();
+  useCatalogVersion(); // subscribe: re-render (and re-read getStories) when remote catalog swaps in
 
   const category = resolveCategory(rawParam);
   const stories = category ? getStories().filter((s) => s.category === category) : [];
