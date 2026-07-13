@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react-native';
+import { renderHook, act, waitFor } from '@testing-library/react-native';
 import { useNarration } from '@/hooks/useNarration';
 import { Page } from '@/types/story';
 
@@ -13,10 +13,15 @@ jest.mock('expo-audio', () => ({
   })),
 }));
 
+// Audio cache resolves to the same url synchronously (no real download in tests).
+jest.mock('@/data/content-cache', () => ({
+  getCachedAudioUri: jest.fn(async (url: string) => url),
+}));
+
 const mockPage: Page = {
   text: 'Test page',
   hasAudio: true,
-  audioSource: 123,
+  audioSource: 'https://cdn/audio/page-0.mp3',
 };
 
 const mockPageNoAudio: Page = {
@@ -143,8 +148,8 @@ describe('useNarration', () => {
   });
 
   it('handles transitions between multiple pages', () => {
-    const page1: Page = { text: 'Page 1', hasAudio: true, audioSource: 1 };
-    const page2: Page = { text: 'Page 2', hasAudio: true, audioSource: 2 };
+    const page1: Page = { text: 'Page 1', hasAudio: true, audioSource: 'https://cdn/a1.mp3' };
+    const page2: Page = { text: 'Page 2', hasAudio: true, audioSource: 'https://cdn/a2.mp3' };
 
     const { result, rerender } = renderHook(
       ({ page }: { page: Page | null }) => useNarration(page),
@@ -167,15 +172,16 @@ describe('useNarration', () => {
     expect(result.current.speechState).toBe('speaking');
   });
 
-  it('auto-starts playing on initial page when isAutoPlaying is true', () => {
+  it('auto-starts playing on initial page when isAutoPlaying is true', async () => {
     const onFinished = jest.fn();
     const { result } = renderHook(() => useNarration(mockPage, true, onFinished));
-    expect(result.current.speechState).toBe('speaking');
+    // Auto-start happens after the audio cache resolves (async).
+    await waitFor(() => expect(result.current.speechState).toBe('speaking'));
   });
 
-  it('auto-starts playing on the new page when isAutoPlaying is true and page changes', () => {
-    const page1: Page = { text: 'Page 1', hasAudio: true, audioSource: 1 };
-    const page2: Page = { text: 'Page 2', hasAudio: true, audioSource: 2 };
+  it('auto-starts playing on the new page when isAutoPlaying is true and page changes', async () => {
+    const page1: Page = { text: 'Page 1', hasAudio: true, audioSource: 'https://cdn/a1.mp3' };
+    const page2: Page = { text: 'Page 2', hasAudio: true, audioSource: 'https://cdn/a2.mp3' };
     const onFinished = jest.fn();
 
     const { result, rerender } = renderHook(
@@ -183,13 +189,13 @@ describe('useNarration', () => {
       { initialProps: { page: page1 } }
     );
 
-    expect(result.current.speechState).toBe('speaking');
+    await waitFor(() => expect(result.current.speechState).toBe('speaking'));
 
     act(() => {
       rerender({ page: page2 });
     });
 
-    expect(result.current.speechState).toBe('speaking');
+    await waitFor(() => expect(result.current.speechState).toBe('speaking'));
   });
 
   it('calls onFinished when audio ends naturally while isAutoPlaying is true', () => {
@@ -197,10 +203,13 @@ describe('useNarration', () => {
     const onFinished = jest.fn();
     useAudioPlayerStatus.mockReturnValue({ didJustFinish: false });
 
-    const { rerender } = renderHook(() => useNarration(mockPage, true, onFinished));
+    const { rerender } = renderHook(
+      ({ page }: { page: Page }) => useNarration(page, true, onFinished),
+      { initialProps: { page: mockPage } }
+    );
 
     useAudioPlayerStatus.mockReturnValue({ didJustFinish: true });
-    act(() => { rerender(); });
+    act(() => { rerender({ page: mockPage }); });
 
     expect(onFinished).toHaveBeenCalledTimes(1);
   });
@@ -210,10 +219,13 @@ describe('useNarration', () => {
     const onFinished = jest.fn();
     useAudioPlayerStatus.mockReturnValue({ didJustFinish: false });
 
-    const { rerender } = renderHook(() => useNarration(mockPage, false, onFinished));
+    const { rerender } = renderHook(
+      ({ page }: { page: Page }) => useNarration(page, false, onFinished),
+      { initialProps: { page: mockPage } }
+    );
 
     useAudioPlayerStatus.mockReturnValue({ didJustFinish: true });
-    act(() => { rerender(); });
+    act(() => { rerender({ page: mockPage }); });
 
     expect(onFinished).not.toHaveBeenCalled();
   });

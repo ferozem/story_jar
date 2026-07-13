@@ -1,8 +1,8 @@
 export interface Page {
   text: string;
-  illustration?: number;
+  illustration?: string;
   hasAudio: boolean;
-  audioSource?: number;
+  audioSource?: string; // remote URL
 }
 
 export const STORY_CATEGORIES = [
@@ -22,7 +22,7 @@ export type StoryCategory = (typeof STORY_CATEGORIES)[number];
 export interface Story {
   id: string;
   title: string;
-  coverArt?: number;
+  coverArt?: string; // remote URL
   readingTime: string;
   category: StoryCategory;
   moral?: string;

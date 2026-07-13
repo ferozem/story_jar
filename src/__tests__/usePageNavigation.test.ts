@@ -5,7 +5,7 @@ import { Story } from '@/types/story';
 const mockStory: Story = {
   id: 'test-story',
   title: 'Test Story',
-  coverArt: 1,
+  coverArt: 'https://cdn/cover.jpg',
   readingTime: '2 min',
   category: 'Courage',
   pages: [

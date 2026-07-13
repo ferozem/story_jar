@@ -5,10 +5,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { StoryCard } from '@/components/StoryCard';
 import { getStories } from '@/data/stories';
+import { useCatalogVersion } from '@/state/ContentProvider';
 import { categoryHeroArt } from '@/data/decorative-art';
 import { Story, StoryCategory, STORY_CATEGORIES } from '@/types/story';
 import { theme } from '@/constants/theme';
-import { useFavorites } from '@/state/AppData';
+import { useFavorites, useRead } from '@/state/AppData';
 
 function resolveCategory(raw?: string): StoryCategory | undefined {
   if (!raw) return undefined;
@@ -24,6 +25,8 @@ export default function CategoryScreen() {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
   const favorites = useFavorites();
+  const read = useRead();
+  useCatalogVersion(); // subscribe: re-render (and re-read getStories) when remote catalog swaps in
 
   const category = resolveCategory(rawParam);
   const stories = category ? getStories().filter((s) => s.category === category) : [];
@@ -76,6 +79,7 @@ export default function CategoryScreen() {
         onPress={() => router.push(`/reader/${item.id}`)}
         isFavorite={favorites.isFavorite(item.id)}
         onToggleFavorite={() => favorites.toggle(item.id)}
+        read={read.isRead(item.id)}
       />
     );
   }

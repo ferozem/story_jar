@@ -9,7 +9,7 @@ import { getStory } from '@/data/stories';
 import { theme } from '@/constants/theme';
 import { usePageNavigation } from '@/hooks/usePageNavigation';
 import { useNarration } from '@/hooks/useNarration';
-import { useFavorites, useContinue } from '@/state/AppData';
+import { useFavorites, useContinue, useRead } from '@/state/AppData';
 
 export default function ReaderScreen() {
   const { id, page } = useLocalSearchParams<{ id: string; page?: string }>();
@@ -24,11 +24,12 @@ export default function ReaderScreen() {
 
   const favorites = useFavorites();
   const { setLast, clear } = useContinue();
+  const { markRead } = useRead();
 
   // Record/clear continue position as the reader moves.
   useEffect(() => {
     if (!story) return;
-    if (nav.isEndStep) { clear(); return; }
+    if (nav.isEndStep) { markRead(story.id); clear(); return; }
     if (nav.currentIndex >= 1 && nav.currentIndex <= nav.totalPages) {
       setLast(story.id, nav.currentIndex);
     }

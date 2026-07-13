@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import { Page } from '@/types/story';
+import { getCachedAudioUri } from '@/data/content-cache';
 
 export type SpeechState = 'idle' | 'speaking' | 'paused';
 
@@ -44,18 +45,25 @@ export function useNarration(
   const playerRef = useRef(player);
   playerRef.current = player;
 
-  // Load audio on page change; auto-start if in continuous-play mode
+  // Load audio on page change; auto-start if in continuous-play mode. The audio
+  // is downloaded to the device cache first (streamed as a fallback on failure),
+  // so replace/play happen after the async resolve.
   useEffect(() => {
+    let active = true;
     safe(() => player.pause());
     setSpeechState('idle');
-    const source = currentPage?.audioSource;
-    if (source) {
-      safe(() => player.replace(source));
-      if (isAutoPlayingRef.current) {
-        safe(() => player.play());
-        setSpeechState('speaking');
-      }
+    const url = currentPage?.audioSource;
+    if (url) {
+      getCachedAudioUri(url).then((uri) => {
+        if (!active) return; // page changed while downloading — drop this result
+        safe(() => player.replace({ uri }));
+        if (isAutoPlayingRef.current) {
+          safe(() => player.play());
+          setSpeechState('speaking');
+        }
+      });
     }
+    return () => { active = false; };
   }, [currentPage]);
 
   // Reset to idle when audio finishes naturally; call onFinished if auto-playing

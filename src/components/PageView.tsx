@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Image, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Animated, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Page } from '@/types/story';
 import { theme } from '@/constants/theme';
@@ -57,7 +58,7 @@ export function PageView({ page, width }: Props) {
         scrollEventThrottle={16}
       >
         {page.illustration != null && (
-          <Image source={page.illustration} style={styles.illustration} resizeMode="contain" />
+          <Image source={page.illustration} style={styles.illustration} contentFit="contain" />
         )}
         <View style={styles.textBlock}>
           {paragraphs.map((para, i) => (

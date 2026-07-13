@@ -6,7 +6,8 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { StoryCard } from '@/components/StoryCard';
 import { searchStories } from '@/data/story-search';
 import { getStories } from '@/data/stories';
-import { useFavorites } from '@/state/AppData';
+import { useCatalogVersion } from '@/state/ContentProvider';
+import { useFavorites, useRead } from '@/state/AppData';
 import { theme } from '@/constants/theme';
 
 function SearchGlyph() {
@@ -26,8 +27,10 @@ function SearchGlyph() {
 export default function SearchScreen() {
   const router = useRouter();
   const favorites = useFavorites();
+  const read = useRead();
   const [query, setQuery] = useState('');
-  const stories = useMemo(() => getStories(), []);
+  const catalogVersion = useCatalogVersion();
+  const stories = useMemo(() => getStories(), [catalogVersion]); // re-read when remote catalog swaps in
   const results = useMemo(() => searchStories(stories, query), [query, stories]);
   const hasQuery = query.trim().length > 0;
 
@@ -67,6 +70,7 @@ export default function SearchScreen() {
             onPress={() => router.push(`/reader/${item.id}`)}
             isFavorite={favorites.isFavorite(item.id)}
             onToggleFavorite={() => favorites.toggle(item.id)}
+            read={read.isRead(item.id)}
           />
         )}
         ListEmptyComponent={
