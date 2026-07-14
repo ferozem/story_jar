@@ -10,10 +10,9 @@
 
 **Key facts (verified):** `app.json` name `story_time`, slug `story_time`, version `1.0.0`, **no** `android.package` (required — blocks any build). Android adaptive-icon assets exist (`assets/images/android-icon-*`, `splash-icon.png`, `icon.png`). No `eas.json`, `eas-cli` not installed. App collects **no** user data, has **no** accounts/login (simplifies Data Safety + kids compliance). Content is fetched from Cloudflare R2 at runtime.
 
-**Chosen identifiers (change here if you dislike them):**
-- Android package: `com.ferozem.storyjar`
-- Store display name: `Story Jar`
-- These are permanent once published — the package name especially **can never change** after first upload.
+**Chosen identifiers:**
+- Android package: `com.storyjar.app` — **permanent, can never change after first upload.** Brand-based (no personal name); not tied to owning any domain.
+- Store display name: `Story Jar` — **changeable anytime** via an app update or the Play listing. Not locked in.
 
 ---
 
@@ -53,7 +52,7 @@
 - [ ] Under `expo.android`, add the package:
   ```json
   "android": {
-    "package": "com.ferozem.storyjar",
+    "package": "com.storyjar.app",
     ...existing adaptiveIcon / predictiveBackGestureEnabled...
   }
   ```
@@ -65,7 +64,7 @@
 - [ ] We will NOT hardcode `android.versionCode`. Instead we set `"autoIncrement": true` on the production build profile in `eas.json` (Task 2.1), so every production build bumps the integer versionCode Play requires. Nothing to add in `app.json` for this.
 
 ### Task 1.3: Sanity-check the config builds
-- [ ] Run `npx expo config --type public` and confirm it prints without error and shows `android.package: com.ferozem.storyjar` and `name: Story Jar`.
+- [ ] Run `npx expo config --type public` and confirm it prints without error and shows `android.package: com.storyjar.app` and `name: Story Jar`.
 - [ ] Commit: `git add app.json && git commit -m "chore: set Android package + store display name for Play release"`
 
 ---
@@ -173,5 +172,5 @@ I'll walk each one; your no-data-collection design makes them short:
 - **Blocking gate identified:** Google Play identity verification (Task 0.2) is the slowest step — plan says start it first, do everything else in parallel.
 - **Hard requirement covered:** `android.package` (Task 1.1) — without it no build is possible.
 - **Kids-app specifics covered:** Families policy / Target Audience (Task 4.2) — the thing most likely to surprise a first-time publisher.
-- **No placeholders:** identifiers chosen (`com.ferozem.storyjar`, "Story Jar"); every command is exact.
+- **No placeholders:** identifiers chosen (`com.storyjar.app`, "Story Jar"); every command is exact.
 - **Reversibility caveat flagged:** package name + signing keystore are permanent post-publish.
