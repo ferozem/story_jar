@@ -2,6 +2,7 @@
   "expo": {
     "name": "Story Jar",
     "slug": "story_time",
+    "owner": "ferozem",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -37,11 +38,25 @@
         }
       ],
       "expo-video",
-      "expo-audio"
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": false,
+          "microphonePermission": false,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b3b254c5-0d67-49a1-bb7d-5eca1d1aa15f"
+      }
     }
   }
 }
