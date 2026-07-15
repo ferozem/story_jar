@@ -56,4 +56,4 @@ revised policy at this same address.
 
 ## Contact
 
-Questions about this policy? Contact us at: **<CONTACT_EMAIL>**
+Questions about this policy? Contact us at: **writetoferoze2002@gmail.com**

@@ -53,8 +53,8 @@ Download Story Jar and start building character, one story at a time.
 - **Content rating:** target "Everyone" (confirmed via the IARC questionnaire in Phase 4)
 
 ## Contact details (shown on the listing)
-- **Email:** <CONTACT_EMAIL>
-- **Privacy policy URL:** <hosted URL from docs/privacy-policy.md>
+- **Email:** writetoferoze2002@gmail.com
+- **Privacy policy URL:** https://ferozem.github.io/story_jar/
 
 ## Graphics checklist (Play requirements)
 - [ ] App icon — 512 × 512 PNG (32-bit, with alpha)
