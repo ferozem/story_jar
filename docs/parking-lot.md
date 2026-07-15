@@ -94,6 +94,22 @@ overhead until someone non-technical needs to add stories.
 
 ---
 
+## 7. Untrack R2-hosted assets from git (slim repo + EAS build uploads)
+
+**What:** `assets/audio/` and the per-story `assets/stories/<id>/` covers are still committed to
+git (~600 MB). They now live on R2, so they don't need to be in the repo. EAS Build archives
+git-tracked files, so every cloud build uploads ~790 MB (slow). `.easignore` alone doesn't help
+because EAS includes committed files in git mode.
+
+**Why parked:** Builds still succeed, just slower. Not launch-blocking.
+
+**Pick up when:** build uploads get annoying, or the repo feels bloated.
+
+**How:** `git rm -r --cached assets/audio assets/stories/<per-story dirs>` (keep local copies as
+the source for re-uploads), add them to `.gitignore`, keep `assets/stories/landing_page` +
+`assets/decorative` + `assets/images` tracked. Repo and every future EAS upload drop to ~90 MB.
+Note: history still holds the blobs — a full slim would need history rewrite (bigger job).
+
 ## 6. Move decorative art (~88 MB) off-bundle
 
 **What:** Category hero art + landing splash still ship inside the binary (they're the fixed
