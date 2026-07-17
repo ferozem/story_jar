@@ -94,6 +94,22 @@ overhead until someone non-technical needs to add stories.
 
 ---
 
+## 8. Landing-screen polish (title clip + button spacing)
+
+**What:** On the landing screen (`src/app/(tabs)/(home)/index.tsx`), the square cover art is
+shown with `resizeMode="cover"` in a flex:1 area, which clips the "Story Jar" title on the
+edges; the "Open the Jar" button also sits a bit close to the system nav bar.
+
+**Why parked:** Cosmetic. An attempt to fix it (full-width `aspectRatio: 1` image + safe-area
+button padding) was reverted because it left awkward empty space / hot-reload glitches — needs a
+calmer redesign, not a quick patch. User accepted the original for launch.
+
+**Pick up when:** doing a UI polish pass (ships fine as an OTA/next update — no rebuild-to-store
+needed for JS-only changes if EAS Update is set up).
+
+**How:** likely an explicit pixel height (screen-width squared) for the image + `insets.bottom`
+padding on the button, tuned visually in Expo Go.
+
 ## 7. Untrack R2-hosted assets from git (slim repo + EAS build uploads)
 
 **What:** `assets/audio/` and the per-story `assets/stories/<id>/` covers are still committed to
