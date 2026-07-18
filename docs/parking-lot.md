@@ -110,21 +110,18 @@ needed for JS-only changes if EAS Update is set up).
 **How:** likely an explicit pixel height (screen-width squared) for the image + `insets.bottom`
 padding on the button, tuned visually in Expo Go.
 
-## 7. Untrack R2-hosted assets from git (slim repo + EAS build uploads)
+## 7. Untrack R2-hosted assets from git (slim repo + EAS build uploads) — ✅ DONE (2026-07-19)
 
-**What:** `assets/audio/` and the per-story `assets/stories/<id>/` covers are still committed to
-git (~600 MB). They now live on R2, so they don't need to be in the repo. EAS Build archives
-git-tracked files, so every cloud build uploads ~790 MB (slow). `.easignore` alone doesn't help
-because EAS includes committed files in git mode.
+**Done in `55d6b36`:** `git rm -r --cached assets/audio assets/stories`, kept
+`assets/stories/landing_page` (its cover is the only bundled/`require()`d story asset), added the
+paths to `.gitignore`. Files remain on disk locally as the R2 re-upload source; `assets/decorative`
++ `assets/images` stay tracked (app shell, bundled). This was a launch blocker after all: EAS ships
+committed files in git mode (so `.easignore` didn't help), the ~800 MB upload kept getting killed
+mid-transfer, and no production AAB could be built until the archive was slimmed.
 
-**Why parked:** Builds still succeed, just slower. Not launch-blocking.
-
-**Pick up when:** build uploads get annoying, or the repo feels bloated.
-
-**How:** `git rm -r --cached assets/audio assets/stories/<per-story dirs>` (keep local copies as
-the source for re-uploads), add them to `.gitignore`, keep `assets/stories/landing_page` +
-`assets/decorative` + `assets/images` tracked. Repo and every future EAS upload drop to ~90 MB.
-Note: history still holds the blobs — a full slim would need history rewrite (bigger job).
+**Still open (optional):** git *history* still holds the blobs, so the repo `.git` is large. A full
+slim needs a history rewrite (`git filter-repo`) — bigger, riskier job. Only worth it if clone size
+becomes a real problem.
 
 ## 6. Move decorative art (~88 MB) off-bundle
 
