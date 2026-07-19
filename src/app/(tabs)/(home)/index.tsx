@@ -1,21 +1,24 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const cover = require('@/assets/stories/landing_page/cover.png');
 
 export default function LandingScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
 
-      {/* Full-screen cover image */}
-      <Image source={cover} style={styles.cover} resizeMode="cover" />
+      {/* Full-width square cover — explicit px square so the whole "Story Jar" title shows (no crop, no intrinsic-size blowup) */}
+      <Image source={cover} style={{ width, height: width }} resizeMode="cover" />
 
-      {/* Bottom panel */}
-      <View style={styles.panel}>
+      {/* Bottom panel — button padded off the system nav bar via safe-area inset */}
+      <View style={[styles.panel, { paddingBottom: insets.bottom + 24 }]}>
         <Text style={styles.hook}>
           Not just stories to pass time—stories to build character.
         </Text>
@@ -38,15 +41,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0D1B2A',
   },
-  cover: {
-    flex: 1,
-    width: '100%',
-  },
   panel: {
+    flex: 1,
     backgroundColor: '#0D1B2A',
     paddingHorizontal: 28,
     paddingTop: 28,
-    paddingBottom: 44,
     gap: 14,
   },
   hook: {
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
-    marginTop: 8,
+    marginTop: 'auto',
     backgroundColor: '#FF6B35',
     borderRadius: 50,
     paddingVertical: 16,

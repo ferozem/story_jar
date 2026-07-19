@@ -1,0 +1,6 @@
+# Per-story media is served from Cloudflare R2 at runtime — not needed in the build.
+# Excluding it cuts the EAS upload from ~1.3 GB to a few MB.
+# Keep landing_page (its cover is bundled/required by the landing screen).
+assets/audio/
+assets/stories/*
+!assets/stories/landing_page

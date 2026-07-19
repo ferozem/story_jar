@@ -47,6 +47,15 @@ example
 /android
 .superpowers/
 
+# R2-hosted media — served from Cloudflare at runtime, not bundled.
+# Kept on disk locally as the re-upload source; only the landing cover is bundled.
+/assets/audio/
+/assets/stories/*
+!/assets/stories/landing_page/
+
+# generated store graphics (regenerate via scripts/make_feature_graphic.py + make_screenshots.sh)
+/build/
+
 # tool artifacts / local caches
 /coverage/
 /tmp/

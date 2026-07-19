@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "story_time",
+    "name": "Story Jar",
     "slug": "story_time",
+    "owner": "ferozem",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -11,11 +12,10 @@
       "icon": "./assets/expo.icon"
     },
     "android": {
+      "package": "com.storyjar.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#1B1B3A"
       },
       "predictiveBackGestureEnabled": false
     },
@@ -36,11 +36,25 @@
         }
       ],
       "expo-video",
-      "expo-audio"
+      [
+        "expo-audio",
+        {
+          "recordAudioAndroid": false,
+          "microphonePermission": false,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b3b254c5-0d67-49a1-bb7d-5eca1d1aa15f"
+      }
     }
   }
 }
